@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "168938787122",
+    "project_id": "plotsklapps-dancefirst",
+    "storage_bucket": "plotsklapps-dancefirst.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168938787122:android:958344620a6eeaf88e872b",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7tx8hvUpbGcqaGjZVXZyXm6YlIsRkyVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168938787122:android:86b0f0d57e7a84408e872b",
+        "android_client_info": {
+          "package_name": "dev.plotsklapps.dancefirst"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7tx8hvUpbGcqaGjZVXZyXm6YlIsRkyVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
