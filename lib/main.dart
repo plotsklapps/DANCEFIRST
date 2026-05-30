@@ -21,11 +21,10 @@ void main() async {
     ),
   );
 
-  // Configure Firebase UI Auth providers (Email/Password and Phone only)
+  // Configure Firebase UI Auth providers (Email/Password only)
   ui_auth.FirebaseUIAuth.configureProviders(
     <ui_auth.AuthProvider<ui_auth.AuthListener, AuthCredential>>[
       ui_auth.EmailAuthProvider(),
-      ui_auth.PhoneAuthProvider(),
     ],
   );
 

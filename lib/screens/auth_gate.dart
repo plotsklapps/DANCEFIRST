@@ -80,7 +80,6 @@ class _AuthGateState extends State<AuthGate> {
                   key: const ValueKey('signin_screen'),
                   providers: <AuthProvider<AuthListener, AuthCredential>>[
                     EmailAuthProvider(),
-                    PhoneAuthProvider(),
                   ],
                   headerBuilder:
                       (
