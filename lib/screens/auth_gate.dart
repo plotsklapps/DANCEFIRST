@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:dancefirst/auth_state.dart';
 import 'package:dancefirst/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart'
@@ -76,6 +77,7 @@ class _AuthGateState extends State<AuthGate> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: SignInScreen(
+                  key: const ValueKey('signin_screen'),
                   providers: <AuthProvider<AuthListener, AuthCredential>>[
                     EmailAuthProvider(),
                     PhoneAuthProvider(),
