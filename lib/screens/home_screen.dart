@@ -1,16 +1,21 @@
+import 'dart:async';
 import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:dancefirst/screens/tarieven_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart'
+    hide AuthProvider, EmailAuthProvider, PhoneAuthProvider;
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final PageController _pageController = PageController();
 
@@ -31,13 +36,94 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_currentIndex]),
         centerTitle: true,
       ),
-      drawer: const Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: <Color>[Colors.teal, Colors.tealAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  const Icon(
+                    Icons.account_circle,
+                    size: 48,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    user?.email ?? user?.phoneNumber ?? 'Gebruiker',
+                    style: GoogleFonts.questrial(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Ingelogd en geverifieerd',
+                    style: GoogleFonts.questrial(
+                      color: const Color(0xCCFFFFFF),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person, color: Colors.teal),
+              title: const Text('Mijn Account'),
+              onTap: () {
+                Navigator.pop(context); // Close drawer
+                unawaited(
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => ProfileScreen(
+                        providers: <AuthProvider<AuthListener, AuthCredential>>[
+                          EmailAuthProvider(),
+                          PhoneAuthProvider(),
+                        ],
+                        actions: <FirebaseUIAction>[
+                          SignedOutAction(Navigator.pop),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.redAccent),
+              title: const Text('Uitloggen'),
+              onTap: () async {
+                Navigator.pop(context); // Close drawer
+                await FirebaseAuth.instance.signOut();
+              },
+            ),
+          ],
+        ),
+      ),
       body: PageView(
         controller: _pageController,
         onPageChanged: (int index) {
