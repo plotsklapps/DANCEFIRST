@@ -25,12 +25,12 @@ class _AuthGateState extends State<AuthGate> {
   @override
   void initState() {
     super.initState();
-    // Luister naar auth changes direct van Firebase
+    // Listen to auth changes from Firebase.
     FirebaseAuth.instance.userChanges().listen((User? user) {
       if (mounted) setState(() {});
     });
 
-    // Periodiek checken
+    // Periodiek checken.
     _verificationTimer = Timer.periodic(
       const Duration(seconds: 3),
       (Timer timer) async {

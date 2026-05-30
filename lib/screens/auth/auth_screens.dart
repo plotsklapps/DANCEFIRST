@@ -30,14 +30,14 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() => _isLoading = true);
     try {
       if (_isLogin) {
-        await widget.service.signInWithEmail(
-          _emailController.text,
-          _passwordController.text,
+        await widget.service.signIn(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
         );
       } else {
-        await widget.service.signUpWithEmail(
-          _emailController.text,
-          _passwordController.text,
+        await widget.service.signUp(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
         );
       }
     } on FirebaseAuthException catch (e) {
