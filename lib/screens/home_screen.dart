@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const HugeIcon(
-                icon: [HugeIcons.strokeRoundedContracts],
+                icon: <List<dynamic>>[HugeIcons.strokeRoundedContracts],
               ),
               title: const Text('Inschrijven'),
               onTap: () async {

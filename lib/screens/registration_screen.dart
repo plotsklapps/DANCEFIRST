@@ -249,8 +249,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     validator: (String? v) {
                       if (v == null || v.isEmpty) return '01-01-1990';
-                      if (!RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(v))
+                      if (!RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(v)) {
                         return 'Formaat DD-MM-YYYY';
+                      }
                       return null;
                     },
                   ),
@@ -261,8 +262,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       if (v == null || v.isEmpty) return 'naam@email.com';
                       if (!RegExp(
                         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(v))
+                      ).hasMatch(v)) {
                         return 'Ongeldig e-mailadres';
+                      }
                       return null;
                     },
                   ),
@@ -276,8 +278,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       );
                       if (!phoneRegex.hasMatch(
                         v.replaceAll(RegExp(r'\s|-'), ''),
-                      ))
+                      )) {
                         return 'Ongeldig nummer';
+                      }
                       return null;
                     },
                   ),
@@ -299,8 +302,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       final RegExp addressRegex = RegExp(
                         r'^[a-zA-Z\s\.]+\s?\d+[a-zA-Z]*$',
                       );
-                      if (!addressRegex.hasMatch(v.trim()))
+                      if (!addressRegex.hasMatch(v.trim())) {
                         return 'Bijv. Bakkerstraat 105';
+                      }
                       return null;
                     },
                   ),
@@ -312,8 +316,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       if (v == null || v.isEmpty) return '1234AB';
                       if (!RegExp(
                         r'^\d{4}\s?[a-zA-Z]{2}$',
-                      ).hasMatch(v.trim().toUpperCase()))
+                      ).hasMatch(v.trim().toUpperCase())) {
                         return 'Bijv. 1234AB';
+                      }
                       return null;
                     },
                   ),
@@ -329,8 +334,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     decoration: const InputDecoration(labelText: 'IBAN'),
                     validator: (String? v) {
                       if (v == null || v.isEmpty) return 'NL01BANK0123456789';
-                      if (!isValidIban(v.replaceAll(' ', '')))
+                      if (!isValidIban(v.replaceAll(' ', ''))) {
                         return 'Ongeldig IBAN';
+                      }
                       return null;
                     },
                   ),
@@ -342,8 +348,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     validator: (String? v) {
                       if (v == null || v.isEmpty) return 'A.B. Achternaam';
-                      if (!RegExp(r'^[a-zA-Z\. \-]+$').hasMatch(v.trim()))
+                      if (!RegExp(r'^[a-zA-Z\. \-]+$').hasMatch(v.trim())) {
                         return 'Voer een geldige naam in';
+                      }
                       return null;
                     },
                   ),
