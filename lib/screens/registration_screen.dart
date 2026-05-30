@@ -147,7 +147,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('DanceFirst Inschrijving')),
+      appBar: AppBar(
+        title: const Text('DanceFirst Inschrijving'),
+      ),
       body: Stepper(
         currentStep: _currentStep,
         onStepContinue: () {

@@ -1,6 +1,6 @@
 import 'package:dancefirst/auth_state.dart';
 import 'package:dancefirst/firebase_options.dart';
-import 'package:dancefirst/screens/registration_screen.dart';
+import 'package:dancefirst/screens/auth_gate.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -44,7 +44,7 @@ class MainEntry extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => const RegistrationScreen(),
+          '/': (BuildContext context) => const AuthGate(),
           '/schedule': (BuildContext context) => const RoosterScreen(),
         },
       ),

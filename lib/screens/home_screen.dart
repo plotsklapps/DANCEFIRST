@@ -1,3 +1,4 @@
+import 'package:dancefirst/screens/registration_screen.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:dancefirst/screens/tarieven_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -117,6 +118,22 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 Navigator.pop(context); // Close drawer
                 await FirebaseAuth.instance.signOut();
+              },
+            ),
+            ListTile(
+              leading: const HugeIcon(
+                icon: [HugeIcons.strokeRoundedContracts],
+              ),
+              title: const Text('Inschrijven'),
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return const RegistrationScreen();
+                    },
+                  ),
+                );
               },
             ),
           ],
