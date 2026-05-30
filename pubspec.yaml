@@ -19,6 +19,7 @@ dependencies:
   hugeicons: ^1.1.7
   signals: ^7.1.0
   firebase_app_check: ^0.4.4+1
+  toastification: ^3.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

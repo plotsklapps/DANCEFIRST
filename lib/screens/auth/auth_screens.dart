@@ -1,4 +1,5 @@
 import 'package:dancefirst/services/firebase_service.dart';
+import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -21,10 +22,11 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin = true;
   bool _isLoading = false;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   Future<void> _submit() async {
-    setState(() {
-      _isLoading = true;
-    });
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
     try {
       if (_isLogin) {
         await widget.service.signInWithEmail(
@@ -39,15 +41,11 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } on Exception catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        ToastService.showError(title: 'Something went wrong', subtitle: '$e');
       }
     } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -59,105 +57,127 @@ class _AuthScreenState extends State<AuthScreen> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // HEADER.
-              Container(
-                height: 140,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.teal.withAlpha(40),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                // HEADER.
+                Container(
+                  height: 140,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.teal.withAlpha(40),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 80),
+                    child: Image.asset('assets/dfLogoBlack.png'),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 80),
-                  child: Image.asset('assets/dfLogoBlack.png'),
-                ),
-              ),
-              // FORM.
-              Card(
-                margin: EdgeInsets.zero,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(24),
+                // FORM.
+                Card(
+                  margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(24),
+                    ),
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        _isLogin ? 'Inloggen' : 'Registreren',
-                        style: theme.textTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          prefixIconConstraints: BoxConstraints(
-                            minWidth: 24,
-                            minHeight: 24,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            _isLogin ? 'Inloggen' : 'Registreren',
+                            style: theme.textTheme.headlineMedium,
                           ),
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.only(right: 18),
-                            child: HugeIcon(
-                              icon: HugeIcons.strokeRoundedMail01,
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _emailController,
+                            textAlign: TextAlign.center,
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  !value.contains('@') ||
+                                  !value.contains('.')) {
+                                return 'Voer een geldig e-mailadres in';
+                              }
+                              return null;
+                            },
+                            decoration: const InputDecoration(
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.only(left: 15, right: 10),
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedMail01,
+                                  size: 20,
+                                ),
+                              ),
+                              labelText: 'Emailadres',
+                              floatingLabelAlignment:
+                                  FloatingLabelAlignment.center,
                             ),
                           ),
-                          labelText: 'Emailadres',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _passwordController,
-                        decoration: const InputDecoration(
-                          prefixIconConstraints: BoxConstraints(
-                            minWidth: 24,
-                            minHeight: 24,
-                          ),
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.only(right: 18),
-                            child: HugeIcon(
-                              icon: HugeIcons.strokeRoundedSquareLock01,
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _passwordController,
+                            textAlign: TextAlign.center,
+                            obscureText: true,
+                            validator: (value) {
+                              if (value == null || value.length < 6) {
+                                return 'Wachtwoord moet min. 6 tekens zijn';
+                              }
+                              return null;
+                            },
+                            decoration: const InputDecoration(
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.only(left: 15, right: 10),
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedSquareLock01,
+                                  size: 20,
+                                ),
+                              ),
+                              labelText: 'Wachtwoord',
+                              floatingLabelAlignment:
+                                  FloatingLabelAlignment.center,
                             ),
                           ),
-                          labelText: 'Wachtwoord',
-                        ),
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 24),
-                      if (_isLoading)
-                        const LinearProgressIndicator(year2023: false)
-                      else
-                        FilledButton.tonal(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50),
+                          const SizedBox(height: 24),
+                          FilledButton.tonal(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                            ),
+                            onPressed: _submit,
+                            child: _isLoading
+                                ? const LinearProgressIndicator()
+                                : Text(
+                                    _isLogin ? 'Inloggen' : 'Registreren',
+                                  ),
                           ),
-                          onPressed: _submit,
-                          child: Text(_isLogin ? 'Inloggen' : 'Registreren'),
-                        ),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isLogin = !_isLogin;
-                          });
-                        },
-                        child: Text(
-                          _isLogin
-                              ? 'Nog geen account? Registreer'
-                              : 'Heb je al een account? Log in',
-                        ),
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _isLogin = !_isLogin;
+                              });
+                            },
+                            child: Text(
+                              _isLogin
+                                  ? 'Nog geen account? Registreer'
+                                  : 'Heb je al een account? Log in',
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
