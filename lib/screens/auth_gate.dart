@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:dancefirst/auth_state.dart';
+import 'package:dancefirst/screens/auth/auth_screens.dart';
 import 'package:dancefirst/screens/home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart'
-    hide AuthProvider, EmailAuthProvider, PhoneAuthProvider;
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:dancefirst/services/firebase_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 // AuthGate responsible for sign in, email verification and showing
 // correct HomeScreen based on sVerifiedUser Signal.
@@ -62,68 +61,17 @@ class _AuthGateState extends State<AuthGate> {
       return const HomeScreen();
     }
 
-    // If not signed in, show LoginScreen.
     final User? user = FirebaseAuth.instance.currentUser;
+
+    // If not signed in, show AuthScreen.
     if (user == null) {
       return Scaffold(
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: SignInScreen(
-                  key: const ValueKey('signin_screen'),
-                  providers: <AuthProvider<AuthListener, AuthCredential>>[
-                    EmailAuthProvider(),
-                  ],
-                  headerBuilder:
-                      (
-                        BuildContext context,
-                        BoxConstraints constraints,
-                        double shrinkOffset,
-                      ) {
-                        return Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[Colors.teal, Colors.tealAccent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  const HugeIcon(
-                                    icon: HugeIcons.strokeRoundedParty,
-                                    size: 48,
-                                    color: Colors.white,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'DanceFirst',
-                                    style: GoogleFonts.questrial(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      letterSpacing: 2,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                ),
-              ),
+            padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: AuthScreen(service: FirebaseService()),
             ),
           ),
         ),

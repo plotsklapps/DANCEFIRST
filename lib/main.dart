@@ -3,9 +3,7 @@ import 'package:dancefirst/firebase_options.dart';
 import 'package:dancefirst/screens/auth_gate.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart' as ui_auth;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,13 +17,6 @@ void main() async {
     providerWeb: ReCaptchaV3Provider(
       '6LdMXwQtAAAAAOXOqaTMGiBf2q1q-E-a2AB0NY-c',
     ),
-  );
-
-  // Configure Firebase UI Auth providers (Email/Password only)
-  ui_auth.FirebaseUIAuth.configureProviders(
-    <ui_auth.AuthProvider<ui_auth.AuthListener, AuthCredential>>[
-      ui_auth.EmailAuthProvider(),
-    ],
   );
 
   // Initialize the global auth listener

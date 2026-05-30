@@ -1,9 +1,6 @@
-import 'dart:async';
 import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:dancefirst/screens/tarieven_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart'
-    hide AuthProvider, EmailAuthProvider, PhoneAuthProvider;
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -12,7 +9,9 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() {
+    return _HomeScreenState();
+  }
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -93,22 +92,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: const Icon(Icons.person, color: Colors.teal),
               title: const Text('Mijn Account'),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context); // Close drawer
-                unawaited(
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => ProfileScreen(
-                        providers: <AuthProvider<AuthListener, AuthCredential>>[
-                          EmailAuthProvider(),
-                          PhoneAuthProvider(),
-                        ],
-                        actions: <FirebaseUIAction>[
-                          SignedOutAction(Navigator.pop),
-                        ],
-                      ),
-                    ),
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                        appBar: AppBar(title: const Text('Mijn Account')),
+                        body: Center(
+                          child: Text(
+                            'Ingelogd als: ${user?.email ?? 'Gebruiker'}',
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
