@@ -1,7 +1,8 @@
 import 'package:dancefirst/auth_state.dart';
 import 'package:dancefirst/firebase_options.dart';
-import 'package:dancefirst/screens/auth_gate.dart';
+import 'package:dancefirst/screens/registration_screen.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await FirebaseAnalytics.instance.logAppOpen();
 
   // App Check tijdelijk uitgeschakeld voor lokaal testen
   // await FirebaseAppCheck.instance.activate(
@@ -41,7 +44,7 @@ class MainEntry extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => const AuthGate(),
+          '/': (BuildContext context) => const RegistrationScreen(),
           '/schedule': (BuildContext context) => const RoosterScreen(),
         },
       ),
