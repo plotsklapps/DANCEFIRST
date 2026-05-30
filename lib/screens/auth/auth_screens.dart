@@ -1,5 +1,6 @@
 import 'package:dancefirst/services/firebase_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -39,9 +40,34 @@ class _AuthScreenState extends State<AuthScreen> {
           _passwordController.text,
         );
       }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        String message = 'Er is iets misgegaan.';
+        switch (e.code) {
+          case 'user-not-found':
+            message = 'Geen account gevonden met dit e-mailadres.';
+          case 'wrong-password':
+            message = 'Het wachtwoord is onjuist.';
+          case 'email-already-in-use':
+            message = 'Dit e-mailadres is al in gebruik.';
+          case 'invalid-email':
+            message = 'Het e-mailadres is ongeldig.';
+          case 'weak-password':
+            message = 'Het wachtwoord is te zwak.';
+          default:
+            message = e.message ?? 'Fout: ${e.code}';
+        }
+        ToastService.showError(
+          title: 'Inlogfout',
+          subtitle: message,
+        );
+      }
     } on Exception catch (e) {
       if (mounted) {
-        ToastService.showError(title: 'Something went wrong', subtitle: '$e');
+        ToastService.showError(
+          title: 'Er is iets misgegaan',
+          subtitle: e.toString(),
+        );
       }
     } finally {
       if (mounted) {
@@ -99,8 +125,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: _emailController,
-                            textAlign: TextAlign.center,
-                            validator: (value) {
+                            validator: (String? value) {
                               if (value == null ||
                                   value.isEmpty ||
                                   !value.contains('@') ||
@@ -117,17 +142,14 @@ class _AuthScreenState extends State<AuthScreen> {
                                   size: 20,
                                 ),
                               ),
-                              labelText: 'Emailadres',
-                              floatingLabelAlignment:
-                                  FloatingLabelAlignment.center,
+                              labelText: 'E-mailadres',
                             ),
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: _passwordController,
-                            textAlign: TextAlign.center,
                             obscureText: true,
-                            validator: (value) {
+                            validator: (String? value) {
                               if (value == null || value.length < 6) {
                                 return 'Wachtwoord moet min. 6 tekens zijn';
                               }
@@ -142,8 +164,6 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                               ),
                               labelText: 'Wachtwoord',
-                              floatingLabelAlignment:
-                                  FloatingLabelAlignment.center,
                             ),
                           ),
                           const SizedBox(height: 24),
