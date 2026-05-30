@@ -111,7 +111,7 @@ class TarievenScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                children: [
+                children: <Widget>[
                   const Text(
                     'De eerste keer inschrijven is bij ons altijd gratis! '
                     'Kom je voor een tweede keer terug? Dan hanteren wij eenmalig €25,- inschrijfkosten.\n\n'
