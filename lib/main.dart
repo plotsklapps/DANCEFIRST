@@ -1,6 +1,5 @@
-import 'package:dancefirst/auth_state.dart';
 import 'package:dancefirst/firebase_options.dart';
-import 'package:dancefirst/screens/auth_gate.dart';
+import 'package:dancefirst/screens/splash_screen.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,8 +22,7 @@ void main() async {
   //   ),
   // );
 
-  // Initialize the global auth listener
-  initAuthStateListener();
+  // Auth listener is now handled reactively by authUserSignal
 
   runApp(const MainEntry());
 }
@@ -44,7 +42,7 @@ class MainEntry extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => const AuthGate(),
+          '/': (BuildContext context) => const SplashScreen(),
           '/schedule': (BuildContext context) => const RoosterScreen(),
         },
       ),
