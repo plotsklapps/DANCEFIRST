@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dancefirst/auth_state.dart';
 import 'package:dancefirst/screens/auth/auth_screens.dart';
 import 'package:dancefirst/screens/home_screen.dart';
@@ -84,12 +86,33 @@ class SplashView extends StatelessWidget {
   }
 }
 
-class VerificationView extends StatelessWidget {
+class VerificationView extends StatefulWidget {
   const VerificationView({
     required this.user,
     super.key,
   });
   final User user;
+
+  @override
+  State<VerificationView> createState() => _VerificationViewState();
+}
+
+class _VerificationViewState extends State<VerificationView> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
+      await refreshUserVerification();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +124,14 @@ class VerificationView extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Text('Verifieer je e-mailadres voor ${user.email}'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text('Verifieer je e-mailadres voor ${widget.user.email}'),
+            ],
+          ),
         ),
       ),
     );

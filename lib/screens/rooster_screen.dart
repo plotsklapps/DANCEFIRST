@@ -167,7 +167,7 @@ class _RoosterScreenState extends State<RoosterScreen> {
                                 final String classId = c['id'] as String;
 
                                 // Check if there is an override for this class
-                                final Map<String, dynamic>? overrideDoc =
+                                final Map<String, dynamic> overrideDoc =
                                     overrides.firstWhere(
                                       (Map<String, dynamic> o) =>
                                           o['classId'] == classId,
@@ -175,17 +175,17 @@ class _RoosterScreenState extends State<RoosterScreen> {
                                     );
 
                                 final bool isCancelled =
-                                    overrideDoc?['isCancelled'] as bool? ??
+                                    overrideDoc['isCancelled'] as bool? ??
                                     false;
                                 final String teacher =
-                                    overrideDoc?['teacherOverride']
+                                    overrideDoc['teacherOverride']
                                         as String? ??
                                     c['teacher'] as String;
                                 final String time =
-                                    overrideDoc?['timeOverride'] as String? ??
+                                    overrideDoc['timeOverride'] as String? ??
                                     c['time'] as String;
                                 final String? notes =
-                                    overrideDoc?['notes'] as String?;
+                                    overrideDoc['notes'] as String?;
 
                                 return StreamBuilder<
                                   List<Map<String, dynamic>>

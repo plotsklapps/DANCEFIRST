@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
                 return Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final TextEditingController nameC = TextEditingController();
     final TextEditingController dobC = TextEditingController();
     String selectedType = 'adult';
-    String selectedTariff = '1x per week, maandelijks opzegbaar';
+    const String selectedTariff = '1x per week, maandelijks opzegbaar';
 
     showDialog<void>(
       context: context,
@@ -257,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        value: selectedType,
+                        initialValue: selectedType,
                         decoration: const InputDecoration(labelText: 'Type'),
                         items: const <DropdownMenuItem<String>>[
                           DropdownMenuItem<String>(

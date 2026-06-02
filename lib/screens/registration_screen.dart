@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +49,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Future<void> _submitRegistration() async {
     setState(() => _isSubmitting = true);
     try {
-      final signatureBytes = await _signatureController.toPngBytes();
+      final Uint8List? signatureBytes = await _signatureController.toPngBytes();
       String signatureBase64 = '';
       if (signatureBytes != null) {
         signatureBase64 = base64Encode(signatureBytes);

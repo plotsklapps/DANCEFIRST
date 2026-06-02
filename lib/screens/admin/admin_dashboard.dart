@@ -1,7 +1,6 @@
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -171,7 +170,7 @@ class _AdminDashboardState extends State<AdminDashboard>
   Widget _buildBaseScheduleTab() {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showClassDialog(),
+        onPressed: _showClassDialog,
         child: const Icon(Icons.add),
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
@@ -215,12 +214,12 @@ class _AdminDashboardState extends State<AdminDashboard>
                   return Card(
                     margin: const EdgeInsets.only(bottom: 16),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8),
                             child: Text(
                               day,
                               style: const TextStyle(
@@ -336,7 +335,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                         (v == null || v.isEmpty) ? 'Verplicht' : null,
                   ),
                   DropdownButtonFormField<String>(
-                    value: selectedDay,
+                    initialValue: selectedDay,
                     items:
                         <String>[
                               'Maandag',
@@ -360,13 +359,13 @@ class _AdminDashboardState extends State<AdminDashboard>
                     decoration: const InputDecoration(labelText: 'Dag'),
                   ),
                   DropdownButtonFormField<String>(
-                    value: selectedType,
-                    items: <DropdownMenuItem<String>>[
-                      const DropdownMenuItem<String>(
+                    initialValue: selectedType,
+                    items: const <DropdownMenuItem<String>>[
+                      DropdownMenuItem<String>(
                         value: 'kids',
                         child: Text('Kids (4-18)'),
                       ),
-                      const DropdownMenuItem<String>(
+                      DropdownMenuItem<String>(
                         value: 'adults',
                         child: Text('Volwassenen (18+)'),
                       ),
@@ -435,7 +434,7 @@ class _AdminDashboardState extends State<AdminDashboard>
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -520,7 +519,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                               itemBuilder: (BuildContext context, int index) {
                                 final Map<String, dynamic> c =
                                     dayClasses[index];
-                                final Map<String, dynamic>? overrideDoc =
+                                final Map<String, dynamic> overrideDoc =
                                     overrides.firstWhere(
                                       (Map<String, dynamic> o) =>
                                           o['classId'] == c['id'],
@@ -528,14 +527,14 @@ class _AdminDashboardState extends State<AdminDashboard>
                                     );
 
                                 final bool isCancelled =
-                                    overrideDoc?['isCancelled'] as bool? ??
+                                    overrideDoc['isCancelled'] as bool? ??
                                     false;
                                 final String teacher =
-                                    overrideDoc?['teacherOverride']
+                                    overrideDoc['teacherOverride']
                                         as String? ??
                                     c['teacher'] as String;
                                 final String time =
-                                    overrideDoc?['timeOverride'] as String? ??
+                                    overrideDoc['timeOverride'] as String? ??
                                     c['time'] as String;
 
                                 return Card(
@@ -712,7 +711,7 @@ class _AdminDashboardState extends State<AdminDashboard>
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -810,7 +809,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                                     children: <Widget>[
                                       if (bookings.isEmpty)
                                         const Padding(
-                                          padding: EdgeInsets.all(16.0),
+                                          padding: EdgeInsets.all(16),
                                           child: Text('Nog geen boekingen.'),
                                         )
                                       else
