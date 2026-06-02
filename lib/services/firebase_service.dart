@@ -1,3 +1,4 @@
+import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,13 +8,21 @@ class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   final Logger _logger = Logger();
+  final FirestoreService _firestore = FirestoreService();
 
   // SIGN IN.
   Future<void> signIn(String email, String password) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final UserCredential credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       _logger.i('Signing In user $email');
       await _analytics.logLogin(loginMethod: 'email');
+      // Proactively ensure the user document exists
+      if (credential.user != null) {
+        await _firestore.createUserDocument(credential.user!.uid, email);
+      }
     } on FirebaseAuthException catch (e) {
       await _handleAuthError(e);
       rethrow;
@@ -30,6 +39,9 @@ class FirebaseService {
           );
       _logger.i('Signing up user $email');
       await _analytics.logSignUp(signUpMethod: 'email');
+      if (credential.user != null) {
+        await _firestore.createUserDocument(credential.user!.uid, email);
+      }
       await credential.user?.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
       await _handleAuthError(e);

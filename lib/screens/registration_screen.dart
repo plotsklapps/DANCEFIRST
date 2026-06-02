@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:dancefirst/services/firestore_service.dart';
+import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 
@@ -39,6 +42,54 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   String _enrollmentType = 'child';
   String? _selectedTariff;
+  bool _isSubmitting = false;
+
+  Future<void> _submitRegistration() async {
+    setState(() => _isSubmitting = true);
+    try {
+      final signatureBytes = await _signatureController.toPngBytes();
+      String signatureBase64 = '';
+      if (signatureBytes != null) {
+        signatureBase64 = base64Encode(signatureBytes);
+      }
+
+      final Map<String, dynamic> regData = <String, dynamic>{
+        'enrollmentType': _enrollmentType,
+        'selectedTariff': _selectedTariff,
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'dob': _dobController.text.trim(),
+        'email': _emailController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'address': _addressController.text.trim(),
+        'zip': _zipController.text.trim(),
+        'city': _cityController.text.trim(),
+        'iban': _ibanController.text.trim(),
+        'accountHolder': _accountHolderController.text.trim(),
+        'signatureBase64': signatureBase64,
+      };
+
+      await FirestoreService().submitRegistration(regData);
+
+      ToastService.showSuccess(
+        title: 'Inschrijving ontvangen',
+        subtitle: 'Je inschrijving is succesvol verzonden!',
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ToastService.showError(
+        title: 'Fout bij inschrijven',
+        subtitle: e.toString(),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
 
   final List<Map<String, String>> _kidsTariffs = <Map<String, String>>[
     <String, String>{
@@ -157,7 +208,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             if (_currentStep < 4) {
               setState(() => _currentStep++);
             } else {
-              // Final submit
+              if (!_isSubmitting) {
+                _submitRegistration();
+              }
             }
           }
         },
