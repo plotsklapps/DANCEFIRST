@@ -105,6 +105,8 @@ class _VerificationViewState extends State<VerificationView> {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
       await refreshUserVerification();
+      // Force signal to re-read current user status
+      authUserSignal.value = AsyncData(FirebaseAuth.instance.currentUser);
     });
   }
 

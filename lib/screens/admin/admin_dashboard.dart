@@ -1,4 +1,5 @@
 import 'package:dancefirst/services/firestore_service.dart';
+import 'package:dancefirst/services/seed_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +35,18 @@ class _AdminDashboardState extends State<AdminDashboard>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Dashboard (Laila)'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.build, color: Colors.white, size: 30),
+            onPressed: () async {
+              await SeedService().seedDatabase();
+              ToastService.showSuccess(
+                title: 'Database ge-seed',
+                subtitle: 'Rooster is ingevuld.',
+              );
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -45,13 +58,33 @@ class _AdminDashboardState extends State<AdminDashboard>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: <Widget>[
-          _buildRegistrationsTab(),
-          _buildBaseScheduleTab(),
-          _buildAdHocTab(),
-          _buildBookingsTab(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FilledButton.icon(
+              onPressed: () async {
+                await SeedService().seedDatabase();
+                ToastService.showSuccess(
+                  title: 'Database ge-seed',
+                  subtitle: 'Rooster is ingevuld.',
+                );
+              },
+              icon: const Icon(Icons.build),
+              label: const Text('Database Initialiseren (Seed)'),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: <Widget>[
+                _buildRegistrationsTab(),
+                _buildBaseScheduleTab(),
+                _buildAdHocTab(),
+                _buildBookingsTab(),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -210,6 +243,12 @@ class _AdminDashboardState extends State<AdminDashboard>
                       .toList();
 
                   if (dayClasses.isEmpty) return const SizedBox.shrink();
+
+                  // Sort classes by time
+                  dayClasses.sort(
+                    (a, b) =>
+                        (a['time'] as String).compareTo(b['time'] as String),
+                  );
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 16),
@@ -530,8 +569,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                                     overrideDoc['isCancelled'] as bool? ??
                                     false;
                                 final String teacher =
-                                    overrideDoc['teacherOverride']
-                                        as String? ??
+                                    overrideDoc['teacherOverride'] as String? ??
                                     c['teacher'] as String;
                                 final String time =
                                     overrideDoc['timeOverride'] as String? ??
