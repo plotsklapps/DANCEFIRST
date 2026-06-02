@@ -20,7 +20,9 @@ class FirestoreService {
   }
 
   Future<void> createUserDocument(String uid, String email) async {
-    final String role = email == 'dancefirstalkmaar@gmail.com'
+    final String role =
+        (email == 'dancefirstalkmaar@gmail.com' ||
+            email == 'plotsklapps@gmail.com')
         ? 'admin'
         : 'client';
     await _db.collection('users').doc(uid).set(<String, dynamic>{
