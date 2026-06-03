@@ -7,22 +7,15 @@ import 'package:signals/signals_flutter.dart';
 final selectedDateSignal = signal<DateTime>(DateTime.now());
 
 class HuidigRoosterTab extends StatelessWidget {
-  const HuidigRoosterTab({
-    required this.firestore,
-    required this.showOverrideDialog,
-    super.key,
-  });
-
-  final FirestoreService firestore;
-  final Function(String, Map<String, dynamic>, Map<String, dynamic>?)
-  showOverrideDialog;
+  HuidigRoosterTab({super.key});
+  final FirestoreService firestore = FirestoreService();
 
   @override
   Widget build(BuildContext context) {
     final selectedDate = selectedDateSignal.watch(context);
     final dateString =
         '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}';
-    final weekDays = [
+    final currentDayName = [
       'Zondag',
       'Maandag',
       'Dinsdag',
@@ -30,8 +23,7 @@ class HuidigRoosterTab extends StatelessWidget {
       'Donderdag',
       'Vrijdag',
       'Zaterdag',
-    ];
-    final currentDayName = weekDays[selectedDate.weekday % 7];
+    ][selectedDate.weekday % 7];
 
     return Scaffold(
       body: Column(
@@ -119,7 +111,8 @@ class HuidigRoosterTab extends StatelessWidget {
                                 IconLibrary.edit,
                                 color: Colors.teal,
                               ),
-                              onPressed: () => showOverrideDialog(
+                              onPressed: () => _showOverrideSheet(
+                                context,
                                 dateString,
                                 c,
                                 overrideDoc,
@@ -135,6 +128,114 @@ class HuidigRoosterTab extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showOverrideSheet(
+    BuildContext context,
+    String dateStr,
+    Map<String, dynamic> c,
+    Map<String, dynamic>? currentOverride,
+  ) async {
+    final teacherOverrideC = TextEditingController(
+      text:
+          currentOverride?['teacherOverride'] as String? ??
+          c['teacher'] as String,
+    );
+    final timeOverrideC = TextEditingController(
+      text: currentOverride?['timeOverride'] as String? ?? c['time'] as String,
+    );
+    final notesC = TextEditingController(
+      text: currentOverride?['notes'] as String? ?? '',
+    );
+    bool isCancelled = currentOverride?['isCancelled'] as bool? ?? false;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            24,
+            16,
+            24,
+            MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Ad-hoc Wijziging',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SwitchListTile(
+                title: const Text('Geannuleerd?'),
+                value: isCancelled,
+                onChanged: (val) => setModalState(() => isCancelled = val),
+              ),
+              if (!isCancelled) ...[
+                TextFormField(
+                  controller: teacherOverrideC,
+                  decoration: const InputDecoration(
+                    labelText: 'Docent Vervanger',
+                  ),
+                ),
+                TextFormField(
+                  controller: timeOverrideC,
+                  decoration: const InputDecoration(
+                    labelText: 'Tijd Aanpassing',
+                  ),
+                ),
+              ],
+              TextFormField(
+                controller: notesC,
+                decoration: const InputDecoration(labelText: 'Opmerkingen'),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        await firestore.removeScheduleOverride(
+                          dateStr,
+                          c['id'] as String,
+                        );
+                        if (context.mounted) Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Herstel',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () async {
+                        await firestore.saveScheduleOverride(
+                          date: dateStr,
+                          classId: c['id'] as String,
+                          isCancelled: isCancelled,
+                          teacherOverride: isCancelled
+                              ? null
+                              : teacherOverrideC.text.trim(),
+                          timeOverride: isCancelled
+                              ? null
+                              : timeOverrideC.text.trim(),
+                          notes: notesC.text.trim(),
+                        );
+                        if (context.mounted) Navigator.pop(context);
+                      },
+                      child: const Text('Opslaan'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

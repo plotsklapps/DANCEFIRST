@@ -8,9 +8,8 @@ import 'package:signals/signals_flutter.dart';
 final selectedDateSignal = signal<DateTime>(DateTime.now());
 
 class BoekingenTab extends StatelessWidget {
-  const BoekingenTab({required this.firestore, super.key});
-
-  final FirestoreService firestore;
+  BoekingenTab({super.key});
+  final FirestoreService _firestore = FirestoreService();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,7 @@ class BoekingenTab extends StatelessWidget {
           ),
           Expanded(
             child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: firestore.getBaseScheduleStream(),
+              stream: _firestore.getBaseScheduleStream(),
               builder: (context, baseSnapshot) {
                 if (baseSnapshot.connectionState == ConnectionState.waiting)
                   return const Center(child: CircularProgressIndicator());
@@ -84,7 +83,7 @@ class BoekingenTab extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final c = dayClasses[index];
                     return StreamBuilder<List<Map<String, dynamic>>>(
-                      stream: firestore.getBookingsStream(
+                      stream: _firestore.getBookingsStream(
                         dateString,
                         c['id'] as String,
                       ),
@@ -113,7 +112,7 @@ class BoekingenTab extends StatelessWidget {
                                         color: Colors.redAccent,
                                       ),
                                       onPressed: () async {
-                                        await firestore.cancelBooking(
+                                        await _firestore.cancelBooking(
                                           date: dateString,
                                           classId: c['id'] as String,
                                           profileId: b['profileId'] as String,
