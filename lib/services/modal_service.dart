@@ -17,10 +17,10 @@ class ModalService {
 
         return Padding(
           padding: EdgeInsets.fromLTRB(
-            32,
+            64,
             0,
-            32,
-            viewInsets.bottom + 20,
+            64,
+            viewInsets.bottom + 24,
           ),
           child: SafeArea(
             left: false,

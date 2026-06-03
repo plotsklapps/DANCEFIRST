@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -89,6 +90,25 @@ class FirestoreService {
         return data;
       }).toList();
     });
+  }
+
+  // --- MERGED SCHEDULE STREAM ---
+  // Dit is de enige plek waar we combineren. We gebruiken rxdart via CombineLatestStream
+  // omdat dit de standaard manier is in Flutter om streams samen te voegen zonder package-hell.
+  Stream<List<Map<String, dynamic>>> getMergedScheduleStream(String date) {
+    return CombineLatestStream.combine2(
+      getBaseScheduleStream(),
+      getScheduleOverridesStream(date),
+      (List<Map<String, dynamic>> base, List<Map<String, dynamic>> overrides) {
+        return base.map((baseClass) {
+          final override = overrides.firstWhere(
+            (o) => o['classId'] == baseClass['id'],
+            orElse: () => <String, dynamic>{},
+          );
+          return <String, dynamic>{...baseClass, ...override};
+        }).toList();
+      },
+    );
   }
 
   Future<void> saveBaseScheduleClass({

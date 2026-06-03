@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 
 class EditClassModal extends StatefulWidget {
   const EditClassModal({
-    this.c,
+    this.classData,
     super.key,
   });
 
-  final Map<String, dynamic>? c;
+  final Map<String, dynamic>? classData;
 
   @override
   State<EditClassModal> createState() {
@@ -30,19 +30,19 @@ class _EditClassModalState extends State<EditClassModal> {
   void initState() {
     super.initState();
     _nameC = TextEditingController(
-      text: widget.c?['name'] as String? ?? '',
+      text: widget.classData?['name'] as String? ?? '',
     );
     _teacherC = TextEditingController(
-      text: widget.c?['teacher'] as String? ?? '',
+      text: widget.classData?['teacher'] as String? ?? '',
     );
     _timeC = TextEditingController(
-      text: widget.c?['time'] as String? ?? '',
+      text: widget.classData?['time'] as String? ?? '',
     );
     _maxC = TextEditingController(
-      text: (widget.c?['maxParticipants'] ?? 20).toString(),
+      text: (widget.classData?['maxParticipants'] ?? 20).toString(),
     );
-    _selectedDay = widget.c?['day'] as String? ?? 'Maandag';
-    _selectedType = widget.c?['type'] as String? ?? 'kids';
+    _selectedDay = widget.classData?['day'] as String? ?? 'Maandag';
+    _selectedType = widget.classData?['type'] as String? ?? 'kids';
   }
 
   @override
@@ -59,7 +59,9 @@ class _EditClassModalState extends State<EditClassModal> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        ModalTitle(title: widget.c == null ? 'Nieuwe Les' : 'Les Bewerken'),
+        ModalTitle(
+          title: widget.classData == null ? 'Nieuwe Les' : 'Les Bewerken',
+        ),
         TextFormField(
           controller: _nameC,
           decoration: const InputDecoration(labelText: 'Lesnaam'),
@@ -105,7 +107,7 @@ class _EditClassModalState extends State<EditClassModal> {
           ),
           onPressed: () async {
             await _firestore.saveBaseScheduleClass(
-              id: widget.c?['id'] as String?,
+              id: widget.classData?['id'] as String?,
               day: _selectedDay,
               time: _timeC.text.trim(),
               name: _nameC.text.trim(),

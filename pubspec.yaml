@@ -24,6 +24,7 @@ dependencies:
   firebase_analytics: ^12.4.1
   signature: ^6.3.0
   phosphoricons_flutter: ^1.0.0
+  rxdart: ^0.28.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

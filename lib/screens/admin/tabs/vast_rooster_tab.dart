@@ -43,13 +43,18 @@ class VastRoosterTab extends StatelessWidget {
                 itemCount: days.length,
                 itemBuilder: (BuildContext context, int dIdx) {
                   final String day = days[dIdx];
-                  final List<Map<String, dynamic>> dayClasses = classes
-                      .where((Map<String, dynamic> c) => c['day'] == day)
-                      .toList();
+                  final List<Map<String, dynamic>> dayClasses = classes.where(
+                    (Map<String, dynamic> classData) {
+                      return classData['day'] == day;
+                    },
+                  ).toList();
                   if (dayClasses.isEmpty) return const SizedBox.shrink();
                   dayClasses.sort(
-                    (Map<String, dynamic> a, Map<String, dynamic> b) =>
-                        (a['time'] as String).compareTo(b['time'] as String),
+                    (Map<String, dynamic> a, Map<String, dynamic> b) {
+                      return (a['time'] as String).compareTo(
+                        b['time'] as String,
+                      );
+                    },
                   );
 
                   return Card(
@@ -71,21 +76,23 @@ class VastRoosterTab extends StatelessWidget {
                           ),
                           const Divider(),
                           ...dayClasses.map(
-                            (Map<String, dynamic> c) => ListTile(
+                            (Map<String, dynamic> classData) => ListTile(
                               leading: Text(
-                                c['time'] as String? ?? '',
+                                classData['time'] as String? ?? '',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               title: Text(
-                                c['name'] as String? ?? '',
+                                classData['name'] as String? ?? '',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               subtitle: Text(
-                                'Docent: ${c['teacher']} (${c['type'] == 'adults' ? '18+' : 'Kids'})',
+                                'Docent: ${classData['teacher']} '
+                                '(${classData['type'] == 'adults' ? '18+'
+                                          '' : 'Kids'})',
                               ),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -101,7 +108,7 @@ class VastRoosterTab extends StatelessWidget {
                                       await ModalService.showModal(
                                         context: context,
                                         child: EditClassModal(
-                                          c: c,
+                                          classData: classData,
                                         ),
                                       );
                                     },
@@ -117,7 +124,7 @@ class VastRoosterTab extends StatelessWidget {
                                       await ModalService.showModal(
                                         context: context,
                                         child: DeleteClassModal(
-                                          c: c,
+                                          classData: classData,
                                         ),
                                       );
                                     },

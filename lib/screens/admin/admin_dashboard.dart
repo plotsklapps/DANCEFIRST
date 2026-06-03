@@ -1,22 +1,21 @@
+import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/screens/admin/tabs/boekingen_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/huidig_rooster_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/vast_rooster_tab.dart';
-import 'package:dancefirst/services/seed_service.dart';
+import 'package:dancefirst/services/schedule_sync_service.dart';
+import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
 
   @override
-  State<AdminDashboard> createState() {
-    return _AdminDashboardState();
-  }
+  State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
 class _AdminDashboardState extends State<AdminDashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final SeedService _seedService = SeedService();
 
   @override
   void initState() {
@@ -39,9 +38,13 @@ class _AdminDashboardState extends State<AdminDashboard>
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: IconButton(
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh, color: Colors.teal),
               onPressed: () async {
-                await _seedService.seedDatabase();
+                await ScheduleSyncService().syncSchedule();
+                ToastService.showSuccess(
+                  title: 'Database gesynchroniseerd',
+                  subtitle: 'Rooster is bijgewerkt.',
+                );
               },
             ),
           ),
@@ -49,9 +52,9 @@ class _AdminDashboardState extends State<AdminDashboard>
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(icon: Icon(Icons.calendar_month), text: 'Vast Rooster'),
-            Tab(icon: Icon(Icons.edit_calendar), text: 'Huidig Rooster'),
-            Tab(icon: Icon(Icons.person), text: 'Boekingen'),
+            Tab(icon: Icon(IconLibrary.calendar), text: 'Vast Rooster'),
+            Tab(icon: Icon(IconLibrary.edit), text: 'Huidig Rooster'),
+            Tab(icon: Icon(IconLibrary.person), text: 'Boekingen'),
           ],
         ),
       ),
