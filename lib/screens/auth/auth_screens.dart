@@ -2,7 +2,6 @@ import 'package:dancefirst/services/firebase_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({
@@ -31,12 +30,12 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       if (_isLogin) {
         await widget.service.signIn(
-          _emailController.text.trim(),
+          _emailController.text.trim().toLowerCase(),
           _passwordController.text.trim(),
         );
       } else {
         await widget.service.signUp(
-          _emailController.text.trim(),
+          _emailController.text.trim().toLowerCase(),
           _passwordController.text.trim(),
         );
       }
@@ -125,6 +124,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
                             validator: (String? value) {
                               if (value == null ||
                                   value.isEmpty ||
@@ -135,13 +135,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               return null;
                             },
                             decoration: const InputDecoration(
-                              prefixIcon: Padding(
-                                padding: EdgeInsets.only(left: 15, right: 10),
-                                child: HugeIcon(
-                                  icon: HugeIcons.strokeRoundedMail01,
-                                  size: 20,
-                                ),
-                              ),
+                              prefixIcon: Icon(Icons.email),
                               labelText: 'E-mailadres',
                             ),
                           ),
@@ -156,13 +150,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               return null;
                             },
                             decoration: const InputDecoration(
-                              prefixIcon: Padding(
-                                padding: EdgeInsets.only(left: 15, right: 10),
-                                child: HugeIcon(
-                                  icon: HugeIcons.strokeRoundedSquareLock01,
-                                  size: 20,
-                                ),
-                              ),
+                              prefixIcon: Icon(Icons.lock),
                               labelText: 'Wachtwoord',
                             ),
                           ),

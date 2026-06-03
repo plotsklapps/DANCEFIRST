@@ -16,15 +16,14 @@ dependencies:
   cloud_firestore: ^6.4.1
   table_calendar: ^3.2.0
   google_fonts: ^8.1.0
-  hugeicons: ^1.1.7
   signals: ^7.1.0
   firebase_app_check: ^0.4.4+1
   toastification: ^3.2.0
   logger: ^2.7.0
   firebase_analytics: ^12.4.1
   signature: ^6.3.0
-  phosphoricons_flutter: ^1.0.0
   rxdart: ^0.28.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

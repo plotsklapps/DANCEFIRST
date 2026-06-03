@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:toastification/toastification.dart';
 
 // Instead of Snackbars, DanceFirst uses toastification package.
@@ -18,7 +17,7 @@ class ToastService {
       alignment: Alignment.topRight,
       direction: TextDirection.ltr,
       animationDuration: const Duration(milliseconds: 400),
-      icon: const HugeIcon(icon: HugeIcons.strokeRoundedCheckmarkCircle01),
+      icon: const Icon(Icons.check_circle),
       showIcon: true,
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
@@ -44,7 +43,7 @@ class ToastService {
       alignment: Alignment.topRight,
       direction: TextDirection.ltr,
       animationDuration: const Duration(milliseconds: 400),
-      icon: const HugeIcon(icon: HugeIcons.strokeRoundedAlert02),
+      icon: const Icon(Icons.warning),
       showIcon: true,
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
@@ -70,7 +69,7 @@ class ToastService {
       alignment: Alignment.topRight,
       direction: TextDirection.ltr,
       animationDuration: const Duration(milliseconds: 400),
-      icon: const HugeIcon(icon: HugeIcons.strokeRoundedAlertCircle),
+      icon: const Icon(Icons.error),
       showIcon: true,
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),

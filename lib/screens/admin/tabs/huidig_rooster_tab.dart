@@ -1,9 +1,7 @@
-import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/modals/overrideclass_modal.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/modal_service.dart';
 import 'package:flutter/material.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 
 final Signal<DateTime> sSelectedDate = Signal<DateTime>(
@@ -116,8 +114,8 @@ class HuidigRoosterTab extends SignalWidget {
                               'Docent: $teacher${isCancelled ? ' (GEANNULEERD)' : ''}',
                             ),
                             trailing: IconButton(
-                              icon: const PhosphorIcon(
-                                IconLibrary.edit,
+                              icon: const Icon(
+                                Icons.edit,
                                 color: Colors.teal,
                               ),
                               onPressed: () async {

@@ -1,14 +1,12 @@
-import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 
 final selectedDateSignal = signal<DateTime>(DateTime.now());
 
-class BoekingenTab extends StatelessWidget {
-  BoekingenTab({super.key});
+class KlantenTab extends StatelessWidget {
+  KlantenTab({super.key});
   final FirestoreService _firestore = FirestoreService();
 
   @override
@@ -99,16 +97,16 @@ class BoekingenTab extends StatelessWidget {
                             children: bookings
                                 .map(
                                   (b) => ListTile(
-                                    leading: const PhosphorIcon(
-                                      IconLibrary.person,
+                                    leading: const Icon(
+                                      Icons.person,
                                       color: Colors.teal,
                                     ),
                                     title: Text(
                                       b['profileName'] as String? ?? 'Onbekend',
                                     ),
                                     trailing: IconButton(
-                                      icon: const PhosphorIcon(
-                                        IconLibrary.delete,
+                                      icon: const Icon(
+                                        Icons.delete,
                                         color: Colors.redAccent,
                                       ),
                                       onPressed: () async {

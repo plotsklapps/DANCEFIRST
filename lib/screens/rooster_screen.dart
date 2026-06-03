@@ -1,9 +1,7 @@
-import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 enum DanceGroup { kids, adults }
 
@@ -94,7 +92,7 @@ class _RoosterScreenState extends State<RoosterScreen> {
                     });
                   }
                 },
-                icon: const PhosphorIcon(IconLibrary.calendar, size: 16),
+                icon: const Icon(Icons.calendar_month),
                 label: const Text('Kies Datum'),
               ),
             ],
@@ -392,7 +390,7 @@ class _RoosterScreenState extends State<RoosterScreen> {
                           Text('Je wilt boeken voor: $className op $dateStr.'),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
-                            value: selectedProfileId,
+                            initialValue: selectedProfileId,
                             decoration: const InputDecoration(
                               labelText: 'Kies deelnemer profiel',
                             ),
@@ -487,10 +485,7 @@ class _RoosterScreenState extends State<RoosterScreen> {
               ...myBookings.map((Map<String, dynamic> b) {
                 return ListTile(
                   title: Text(b['profileName'] as String? ?? ''),
-                  trailing: const PhosphorIcon(
-                    PhosphorIconsRegular.x,
-                    color: Colors.redAccent,
-                  ),
+                  trailing: const Icon(Icons.close),
                   onTap: () async {
                     await _firestore.cancelBooking(
                       date: dateStr,

@@ -1,4 +1,3 @@
-import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/screens/admin/admin_dashboard.dart';
 import 'package:dancefirst/screens/registration_screen.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
@@ -8,7 +7,6 @@ import 'package:dancefirst/services/toast_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          PhosphorIcon(PhosphorIconsRegular.star, size: 80, color: Colors.teal),
+          Icon(Icons.star, size: 80, color: Colors.teal),
           SizedBox(height: 16),
           Text(
             'Welkom bij DanceFirst!',
@@ -86,8 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _showProfileManager(BuildContext context, User user) {
-    showModalBottomSheet<void>(
+  Future<void> _showProfileManager(BuildContext context, User user) async {
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -116,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           IconButton(
-                            icon: const PhosphorIcon(PhosphorIconsRegular.x),
+                            icon: const Icon(Icons.close),
                             onPressed: () => Navigator.pop(context),
                           ),
                         ],
@@ -166,10 +164,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: ListTile(
                                         leading: CircleAvatar(
                                           backgroundColor: Colors.teal.shade50,
-                                          child: PhosphorIcon(
+                                          child: Icon(
                                             p['type'] == 'child'
-                                                ? IconLibrary.child
-                                                : IconLibrary.person,
+                                                ? Icons.child_care
+                                                : Icons.person,
                                             color: Colors.teal,
                                           ),
                                         ),
@@ -178,9 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           '${p['type'] == 'child' ? 'Kind' : 'Volwassene'} | Geboren: ${p['dob']}',
                                         ),
                                         trailing: IconButton(
-                                          icon: const PhosphorIcon(
-                                            IconLibrary.delete,
-                                            color: Colors.redAccent,
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.error,
                                           ),
                                           onPressed: () async {
                                             await _firestore.deleteProfile(
@@ -208,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         onPressed: () =>
                             _showAddProfileDialog(context, user.uid),
-                        icon: const PhosphorIcon(IconLibrary.add),
+                        icon: const Icon(Icons.add),
                         label: const Text('Nieuw Profiel Toevoegen'),
                       ),
                     ],
@@ -222,14 +222,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showAddProfileDialog(BuildContext context, String uid) {
+  Future<void> _showAddProfileDialog(BuildContext context, String uid) async {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final TextEditingController nameC = TextEditingController();
     final TextEditingController dobC = TextEditingController();
     String selectedType = 'adult';
     const String selectedTariff = '1x per week, maandelijks opzegbaar';
 
-    showDialog<void>(
+    await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
@@ -341,8 +341,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  const PhosphorIcon(
-                    IconLibrary.person,
+                  const Icon(
+                    Icons.person,
                     size: 48,
                     color: Colors.white,
                   ),
@@ -369,38 +369,39 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             if (_userRole == 'admin')
               ListTile(
-                leading: const PhosphorIcon(
-                  PhosphorIconsRegular.shieldCheck,
-                  color: Colors.amber,
+                leading: const Icon(
+                  Icons.shield,
                 ),
                 title: const Text('Admin Dashboard'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context); // Close drawer
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (BuildContext context) => const AdminDashboard(),
+                      builder: (BuildContext context) {
+                        return const AdminDashboard();
+                      },
                     ),
                   );
                 },
               ),
             ListTile(
-              leading: const PhosphorIcon(
-                IconLibrary.person,
+              leading: const Icon(
+                Icons.person,
                 color: Colors.teal,
               ),
               title: const Text('Mijn Account & Profielen'),
               onTap: () async {
                 Navigator.pop(context); // Close drawer
                 if (user != null) {
-                  _showProfileManager(context, user);
+                  await _showProfileManager(context, user);
                 }
               },
             ),
             ListTile(
-              leading: PhosphorIcon(
-                IconLibrary.logout,
-                color: Colors.redAccent,
+              leading: Icon(
+                Icons.logout,
+                color: Theme.of(context).colorScheme.error,
               ),
               title: const Text('Uitloggen'),
               onTap: () async {
@@ -409,7 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const PhosphorIcon(IconLibrary.contracts),
+              leading: const Icon(Icons.contact_page_rounded),
               title: const Text('Inschrijven'),
               onTap: () async {
                 await Navigator.push(
@@ -442,25 +443,25 @@ class _HomeScreenState extends State<HomeScreen> {
             curve: Curves.easeInOut,
           );
         },
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: PhosphorIcon(IconLibrary.home),
+            icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: PhosphorIcon(IconLibrary.calendar),
+            icon: Icon(Icons.calendar_month),
             label: 'Rooster',
           ),
           BottomNavigationBarItem(
-            icon: PhosphorIcon(IconLibrary.money),
+            icon: Icon(Icons.monetization_on),
             label: 'Tarieven',
           ),
           BottomNavigationBarItem(
-            icon: PhosphorIcon(IconLibrary.info),
+            icon: Icon(Icons.info),
             label: 'Nieuws',
           ),
           BottomNavigationBarItem(
-            icon: PhosphorIcon(IconLibrary.question),
+            icon: Icon(Icons.help),
             label: 'Contact',
           ),
         ],

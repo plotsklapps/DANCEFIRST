@@ -1,10 +1,8 @@
-import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/modals/deleteclass_modal.dart';
 import 'package:dancefirst/modals/editclass_modal.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/modal_service.dart';
 import 'package:flutter/material.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class VastRoosterTab extends StatelessWidget {
   VastRoosterTab({super.key});
@@ -148,7 +146,7 @@ class VastRoosterTab extends StatelessWidget {
             child: const EditClassModal(),
           );
         },
-        child: const PhosphorIcon(IconLibrary.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

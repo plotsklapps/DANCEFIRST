@@ -1,20 +1,16 @@
 import 'dart:async';
 
-import 'package:dancefirst/auth_state.dart';
 import 'package:dancefirst/screens/auth/auth_screens.dart';
 import 'package:dancefirst/screens/home_screen.dart';
 import 'package:dancefirst/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
-class SplashScreen extends SignalStatefulWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() {
-    return _SplashScreenState();
-  }
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
@@ -24,55 +20,52 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future<void>.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _minDurationMet = true;
-        });
-      }
+      if (mounted) setState(() => _minDurationMet = true);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final AsyncState<User?> user = authUserSignal.value;
+    if (!_minDurationMet) return const SplashView();
 
-    // Show splash logo/indicator until timer finishes
-    if (!_minDurationMet) {
-      return const SplashView();
-    }
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SplashView();
+        }
 
-    final User? authUser = user.value;
-    if (authUser != null) {
-      if (!authUser.emailVerified) {
-        return VerificationView(user: authUser);
-      }
-      return const HomeScreen();
-    }
+        final user = snapshot.data;
+        if (user != null) {
+          if (!user.emailVerified) return VerificationView(user: user);
+          return const HomeScreen();
+        }
 
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: AuthScreen(service: FirebaseService()),
+        return Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: AuthScreen(service: FirebaseService()),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             Image.asset('assets/dfLogoBlack.png', width: 200),
             const SizedBox(height: 32),
             const Padding(
@@ -87,10 +80,7 @@ class SplashView extends StatelessWidget {
 }
 
 class VerificationView extends StatefulWidget {
-  const VerificationView({
-    required this.user,
-    super.key,
-  });
+  const VerificationView({required this.user, super.key});
   final User user;
 
   @override
@@ -103,10 +93,10 @@ class _VerificationViewState extends State<VerificationView> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
-      await refreshUserVerification();
-      // Force signal to re-read current user status
-      authUserSignal.value = AsyncData(FirebaseAuth.instance.currentUser);
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+      await FirebaseAuth.instance.currentUser?.reload();
+      // Forceer een rebuild om de status te checken
+      if (mounted) setState(() {});
     });
   }
 
@@ -128,7 +118,7 @@ class _VerificationViewState extends State<VerificationView> {
           padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+            children: [
               const CircularProgressIndicator(),
               const SizedBox(height: 16),
               Text('Verifieer je e-mailadres voor ${widget.user.email}'),

@@ -1,4 +1,3 @@
-import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/screens/admin/tabs/boekingen_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/huidig_rooster_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/vast_rooster_tab.dart';
@@ -52,9 +51,9 @@ class _AdminDashboardState extends State<AdminDashboard>
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(icon: Icon(IconLibrary.calendar), text: 'Vast Rooster'),
-            Tab(icon: Icon(IconLibrary.edit), text: 'Huidig Rooster'),
-            Tab(icon: Icon(IconLibrary.person), text: 'Boekingen'),
+            Tab(icon: Icon(Icons.calendar_month), text: 'Vast Rooster'),
+            Tab(icon: Icon(Icons.edit), text: 'Huidig Rooster'),
+            Tab(icon: Icon(Icons.person), text: 'Klanten'),
           ],
         ),
       ),
@@ -63,7 +62,7 @@ class _AdminDashboardState extends State<AdminDashboard>
         children: <Widget>[
           VastRoosterTab(),
           HuidigRoosterTab(),
-          BoekingenTab(),
+          KlantenTab(),
         ],
       ),
     );
