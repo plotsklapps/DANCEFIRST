@@ -1,3 +1,4 @@
+import 'package:dancefirst/constants/icon_library.dart';
 import 'package:dancefirst/screens/admin/admin_dashboard.dart';
 import 'package:dancefirst/screens/registration_screen.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
@@ -7,7 +8,7 @@ import 'package:dancefirst/services/toast_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(Icons.star_purple500_outlined, size: 80, color: Colors.teal),
+          PhosphorIcon(PhosphorIconsRegular.star, size: 80, color: Colors.teal),
           SizedBox(height: 16),
           Text(
             'Welkom bij DanceFirst!',
@@ -102,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
                 return Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -115,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.close),
+                            icon: const PhosphorIcon(PhosphorIconsRegular.x),
                             onPressed: () => Navigator.pop(context),
                           ),
                         ],
@@ -165,10 +166,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: ListTile(
                                         leading: CircleAvatar(
                                           backgroundColor: Colors.teal.shade50,
-                                          child: Icon(
+                                          child: PhosphorIcon(
                                             p['type'] == 'child'
-                                                ? Icons.child_care
-                                                : Icons.person,
+                                                ? IconLibrary.child
+                                                : IconLibrary.person,
                                             color: Colors.teal,
                                           ),
                                         ),
@@ -177,8 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           '${p['type'] == 'child' ? 'Kind' : 'Volwassene'} | Geboren: ${p['dob']}',
                                         ),
                                         trailing: IconButton(
-                                          icon: const Icon(
-                                            Icons.delete_outline,
+                                          icon: const PhosphorIcon(
+                                            IconLibrary.delete,
                                             color: Colors.redAccent,
                                           ),
                                           onPressed: () async {
@@ -207,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         onPressed: () =>
                             _showAddProfileDialog(context, user.uid),
-                        icon: const Icon(Icons.add),
+                        icon: const PhosphorIcon(IconLibrary.add),
                         label: const Text('Nieuw Profiel Toevoegen'),
                       ),
                     ],
@@ -257,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        initialValue: selectedType,
+                        value: selectedType,
                         decoration: const InputDecoration(labelText: 'Type'),
                         items: const <DropdownMenuItem<String>>[
                           DropdownMenuItem<String>(
@@ -340,8 +341,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  const Icon(
-                    Icons.account_circle,
+                  const PhosphorIcon(
+                    IconLibrary.person,
                     size: 48,
                     color: Colors.white,
                   ),
@@ -368,8 +369,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             if (_userRole == 'admin')
               ListTile(
-                leading: const Icon(
-                  Icons.admin_panel_settings,
+                leading: const PhosphorIcon(
+                  PhosphorIconsRegular.shieldCheck,
                   color: Colors.amber,
                 ),
                 title: const Text('Admin Dashboard'),
@@ -384,7 +385,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ListTile(
-              leading: const Icon(Icons.person, color: Colors.teal),
+              leading: const PhosphorIcon(
+                IconLibrary.person,
+                color: Colors.teal,
+              ),
               title: const Text('Mijn Account & Profielen'),
               onTap: () async {
                 Navigator.pop(context); // Close drawer
@@ -394,7 +398,10 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.redAccent),
+              leading: PhosphorIcon(
+                IconLibrary.logout,
+                color: Colors.redAccent,
+              ),
               title: const Text('Uitloggen'),
               onTap: () async {
                 Navigator.pop(context); // Close drawer
@@ -402,9 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const HugeIcon(
-                icon: HugeIcons.strokeRoundedContracts,
-              ),
+              leading: const PhosphorIcon(IconLibrary.contracts),
               title: const Text('Inschrijven'),
               onTap: () async {
                 await Navigator.push(
@@ -437,25 +442,25 @@ class _HomeScreenState extends State<HomeScreen> {
             curve: Curves.easeInOut,
           );
         },
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedHome01),
+            icon: PhosphorIcon(IconLibrary.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedCalendar03),
+            icon: PhosphorIcon(IconLibrary.calendar),
             label: 'Rooster',
           ),
           BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedSaveMoneyEuro),
+            icon: PhosphorIcon(IconLibrary.money),
             label: 'Tarieven',
           ),
           BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedInformationCircle),
+            icon: PhosphorIcon(IconLibrary.info),
             label: 'Nieuws',
           ),
           BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedBubbleChatQuestion),
+            icon: PhosphorIcon(IconLibrary.question),
             label: 'Contact',
           ),
         ],

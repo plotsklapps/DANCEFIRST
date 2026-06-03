@@ -34,6 +34,7 @@ class MainEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     return ToastificationWrapper(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'DanceFirst',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
