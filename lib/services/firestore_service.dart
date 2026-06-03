@@ -1,15 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // --- USER & ROLES ---
-  Future<String> getUserRole(String uid) async {
+  Future<String> getUserRole() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) return 'client';
     try {
       final DocumentSnapshot<Map<String, dynamic>> doc = await _db
           .collection('users')
-          .doc(uid)
+          .doc(user.uid)
           .get();
       if (doc.exists) {
         return doc.data()?['role'] as String? ?? 'client';
@@ -93,8 +96,6 @@ class FirestoreService {
   }
 
   // --- MERGED SCHEDULE STREAM ---
-  // Dit is de enige plek waar we combineren. We gebruiken rxdart via CombineLatestStream
-  // omdat dit de standaard manier is in Flutter om streams samen te voegen zonder package-hell.
   Stream<List<Map<String, dynamic>>> getMergedScheduleStream(String date) {
     return CombineLatestStream.combine2(
       getBaseScheduleStream(),

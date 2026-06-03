@@ -1,10 +1,9 @@
 import 'package:dancefirst/firebase_options.dart';
-import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:dancefirst/screens/splash_screen.dart';
+import 'package:dancefirst/theme/flex_theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:toastification/toastification.dart';
 
 void main() async {
@@ -36,16 +35,8 @@ class MainEntry extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'DanceFirst',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-          useMaterial3: true,
-          fontFamily: GoogleFonts.questrial().fontFamily,
-        ),
-        initialRoute: '/',
-        routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => const SplashScreen(),
-          '/schedule': (BuildContext context) => const RoosterScreen(),
-        },
+        theme: AppTheme.light,
+        home: const SplashScreen(),
       ),
     );
   }

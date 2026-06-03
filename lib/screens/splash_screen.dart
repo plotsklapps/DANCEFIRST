@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dancefirst/screens/auth/auth_screens.dart';
 import 'package:dancefirst/screens/home_screen.dart';
-import 'package:dancefirst/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +9,9 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() {
+    return _SplashScreenState();
+  }
 }
 
 class _SplashScreenState extends State<SplashScreen> {
@@ -19,8 +20,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(const Duration(seconds: 2), () {
-      if (mounted) setState(() => _minDurationMet = true);
+
+    // Set a fake wait to keep app from jumping around.
+    Future<void>.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          _minDurationMet = true;
+        });
+      }
     });
   }
 
@@ -29,16 +36,19 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!_minDurationMet) return const SplashView();
 
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SplashView();
         }
 
-        final user = snapshot.data;
+        final User? user = snapshot.data;
         if (user != null) {
-          if (!user.emailVerified) return VerificationView(user: user);
-          return const HomeScreen();
+          if (!user.emailVerified) {
+            return VerificationView(user: user);
+          } else {
+            return const HomeScreen();
+          }
         }
 
         return Scaffold(
@@ -47,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
               padding: const EdgeInsets.all(32),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: AuthScreen(service: FirebaseService()),
+                child: const AuthScreen(),
               ),
             ),
           ),
@@ -61,6 +71,8 @@ class SplashView extends StatelessWidget {
   const SplashView({super.key});
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -68,10 +80,7 @@ class SplashView extends StatelessWidget {
           children: [
             Image.asset('assets/dfLogoBlack.png', width: 200),
             const SizedBox(height: 32),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 48),
-              child: LinearProgressIndicator(),
-            ),
+            const SizedBox(width: 200, child: LinearProgressIndicator()),
           ],
         ),
       ),
@@ -93,10 +102,8 @@ class _VerificationViewState extends State<VerificationView> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      await FirebaseAuth.instance.currentUser?.reload();
-      // Forceer een rebuild om de status te checken
-      if (mounted) setState(() {});
+    _timer = Timer.periodic(const Duration(seconds: 2), (_) async {
+      await widget.user.reload();
     });
   }
 

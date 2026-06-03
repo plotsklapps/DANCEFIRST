@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({
-    required this.service,
     super.key,
   });
-  final FirebaseService service;
 
   @override
   State<AuthScreen> createState() {
@@ -17,6 +15,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final FirebaseService _firebaseService = FirebaseService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLogin = true;
@@ -29,12 +28,12 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() => _isLoading = true);
     try {
       if (_isLogin) {
-        await widget.service.signIn(
+        await _firebaseService.signIn(
           _emailController.text.trim().toLowerCase(),
           _passwordController.text.trim(),
         );
       } else {
-        await widget.service.signUp(
+        await _firebaseService.signUp(
           _emailController.text.trim().toLowerCase(),
           _passwordController.text.trim(),
         );
@@ -92,14 +91,14 @@ class _AuthScreenState extends State<AuthScreen> {
                   height: 140,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.teal.withAlpha(40),
+                    color: theme.colorScheme.primary,
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 80),
-                    child: Image.asset('assets/dfLogoBlack.png'),
+                    child: Image.asset('assets/dfLogoWhite.png'),
                   ),
                 ),
                 // FORM.
@@ -155,9 +154,9 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          FilledButton.tonal(
+                          FilledButton(
                             style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(double.infinity, 50),
+                              minimumSize: const Size(double.infinity, 48),
                             ),
                             onPressed: _submit,
                             child: _isLoading
@@ -175,8 +174,16 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                             child: Text(
                               _isLogin
-                                  ? 'Nog geen account? Registreer'
-                                  : 'Heb je al een account? Log in',
+                                  ? 'Nog geen account?'
+                                  : 'Heb je al een account?',
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              //TODO(plotsklapps): Toevoegen!
+                            },
+                            child: const Text(
+                              'Wachtwoord vergeten?',
                             ),
                           ),
                         ],

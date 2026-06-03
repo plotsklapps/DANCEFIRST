@@ -23,6 +23,7 @@ dependencies:
   firebase_analytics: ^12.4.1
   signature: ^6.3.0
   rxdart: ^0.28.0
+  flex_color_scheme: ^8.4.0
 
 dev_dependencies:
   flutter_test:
