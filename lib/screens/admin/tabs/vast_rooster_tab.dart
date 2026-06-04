@@ -5,14 +5,15 @@ import 'package:dancefirst/services/modal_service.dart';
 import 'package:flutter/material.dart';
 
 class VastRoosterTab extends StatelessWidget {
-  VastRoosterTab({super.key});
-  final FirestoreService _firestore = FirestoreService();
+  const VastRoosterTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final FirestoreService firestoreService = FirestoreService();
+
     return Scaffold(
       body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: _firestore.getBaseScheduleStream(),
+        stream: firestoreService.getBaseScheduleStream(),
         builder:
             (
               BuildContext context,

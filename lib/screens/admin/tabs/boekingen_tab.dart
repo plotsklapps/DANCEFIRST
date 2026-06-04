@@ -5,13 +5,14 @@ import 'package:signals/signals_flutter.dart';
 
 Signal<DateTime> selectedDateSignal = Signal<DateTime>(DateTime.now());
 
-class KlantenTab extends StatelessWidget {
-  KlantenTab({super.key});
-  final FirestoreService _firestore = FirestoreService();
+class KlantenTab extends SignalWidget {
+  const KlantenTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final DateTime selectedDate = selectedDateSignal.watch(context);
+    final FirestoreService firestoreService = FirestoreService();
+
+    final DateTime selectedDate = selectedDateSignal.value;
     final String dateString =
         '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}';
     final List<String> weekDays = <String>[
@@ -59,7 +60,7 @@ class KlantenTab extends StatelessWidget {
           ),
           Expanded(
             child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: _firestore.getBaseScheduleStream(),
+              stream: firestoreService.getBaseScheduleStream(),
               builder:
                   (
                     BuildContext context,
@@ -91,7 +92,7 @@ class KlantenTab extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         final Map<String, dynamic> c = dayClasses[index];
                         return StreamBuilder<List<Map<String, dynamic>>>(
-                          stream: _firestore.getBookingsStream(
+                          stream: firestoreService.getBookingsStream(
                             dateString,
                             c['id'] as String,
                           ),
@@ -128,12 +129,15 @@ class KlantenTab extends StatelessWidget {
                                                 color: Colors.redAccent,
                                               ),
                                               onPressed: () async {
-                                                await _firestore.cancelBooking(
-                                                  date: dateString,
-                                                  classId: c['id'] as String,
-                                                  profileId:
-                                                      b['profileId'] as String,
-                                                );
+                                                await firestoreService
+                                                    .cancelBooking(
+                                                      date: dateString,
+                                                      classId:
+                                                          c['id'] as String,
+                                                      profileId:
+                                                          b['profileId']
+                                                              as String,
+                                                    );
                                                 ToastService.showSuccess(
                                                   title: 'Geannuleerd',
                                                   subtitle:

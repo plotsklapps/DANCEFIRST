@@ -1,4 +1,4 @@
-import 'package:dancefirst/screens/admin/tabs/abonnementen_tab.dart'; // <--- Nieuwe tab
+import 'package:dancefirst/screens/admin/tabs/abonnementen_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/boekingen_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/huidig_rooster_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/vast_rooster_tab.dart';
@@ -24,7 +24,7 @@ class _AdminDashboardState extends State<AdminDashboard>
     _tabController = TabController(
       length: 4,
       vsync: this,
-    ); // <--- Length van 3 naar 4
+    );
   }
 
   @override
@@ -42,7 +42,7 @@ class _AdminDashboardState extends State<AdminDashboard>
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: IconButton(
-              icon: const Icon(Icons.refresh, color: Colors.teal),
+              icon: const Icon(Icons.refresh),
               onPressed: () async {
                 try {
                   // Synchroniseer het rooster.
@@ -69,19 +69,25 @@ class _AdminDashboardState extends State<AdminDashboard>
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(icon: Icon(Icons.calendar_month), text: 'Vast Rooster'),
-            Tab(icon: Icon(Icons.edit), text: 'Huidig Rooster'),
-            Tab(icon: Icon(Icons.euro), text: 'Tarieven'), // <--- Nieuwe tab
-            Tab(icon: Icon(Icons.person), text: 'Klanten'),
+            Tab(
+              icon: Icon(Icons.calendar_month_outlined),
+              text: 'Vast Rooster',
+            ),
+            Tab(
+              icon: Icon(Icons.edit_calendar_outlined),
+              text: 'Huidig Rooster',
+            ),
+            Tab(icon: Icon(Icons.euro_outlined), text: 'Abonnementen'),
+            Tab(icon: Icon(Icons.person_outlined), text: 'Klanten'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: <Widget>[
+        children: const <Widget>[
           VastRoosterTab(),
           HuidigRoosterTab(),
-          const AbonnementenTab(), // <--- Nieuwe tab widget
+          AbonnementenTab(),
           KlantenTab(),
         ],
       ),

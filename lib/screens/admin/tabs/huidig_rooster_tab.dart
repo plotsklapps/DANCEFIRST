@@ -10,11 +10,11 @@ final Signal<DateTime> sSelectedDate = Signal<DateTime>(
 );
 
 class HuidigRoosterTab extends SignalWidget {
-  HuidigRoosterTab({super.key});
-  final FirestoreService _firestore = FirestoreService();
+  const HuidigRoosterTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final FirestoreService firestoreService = FirestoreService();
     final DateTime selectedDate = sSelectedDate.value;
     final String dateString =
         '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}';
@@ -62,7 +62,7 @@ class HuidigRoosterTab extends SignalWidget {
           ),
           Expanded(
             child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: _firestore.getMergedScheduleStream(dateString),
+              stream: firestoreService.getMergedScheduleStream(dateString),
               builder:
                   (
                     BuildContext context,

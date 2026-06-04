@@ -35,8 +35,8 @@ class _AuthScreenState extends State<AuthScreen> {
       autoDispose: true,
     ),
   );
-  final Signal<bool> _isPasswordVisible = signal<bool>(
-    false,
+  final Signal<bool> _isPasswordObscured = signal<bool>(
+    true,
     options: const SignalOptions<bool>(
       name: '_isPasswordVisible',
       autoDispose: true,
@@ -101,7 +101,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: _isPasswordVisible.value,
+                          obscureText: _isPasswordObscured.value,
                           validator: (String? value) {
                             if (value == null || value.length < 6) {
                               return 'Wachtwoord moet minimaal 6 tekens zijn';
@@ -113,11 +113,11 @@ class _AuthScreenState extends State<AuthScreen> {
                             labelText: 'Wachtwoord',
                             suffixIcon: IconButton(
                               onPressed: () {
-                                _isPasswordVisible.value =
-                                    !_isPasswordVisible.value;
+                                _isPasswordObscured.value =
+                                    !_isPasswordObscured.value;
                               },
                               icon: Icon(
-                                _isPasswordVisible.value
+                                _isPasswordObscured.value
                                     ? Icons.visibility_off_outlined
                                     : Icons.visibility_outlined,
                               ),
