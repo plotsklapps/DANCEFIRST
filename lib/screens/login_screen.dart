@@ -4,18 +4,18 @@ import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-class AuthScreen extends SignalStatefulWidget {
-  const AuthScreen({
+class LoginScreen extends SignalStatefulWidget {
+  const LoginScreen({
     super.key,
   });
 
   @override
-  State<AuthScreen> createState() {
-    return _AuthScreenState();
+  State<LoginScreen> createState() {
+    return _LoginScreenState();
   }
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final FirebaseService _firebaseService = FirebaseService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -32,13 +32,6 @@ class _AuthScreenState extends State<AuthScreen> {
     false,
     options: const SignalOptions<bool>(
       name: '_isLoading',
-      autoDispose: true,
-    ),
-  );
-  final Signal<bool> _isPasswordObscured = signal<bool>(
-    true,
-    options: const SignalOptions<bool>(
-      name: '_isPasswordVisible',
       autoDispose: true,
     ),
   );
@@ -101,27 +94,16 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: _isPasswordObscured.value,
+                          obscureText: true,
                           validator: (String? value) {
                             if (value == null || value.length < 6) {
                               return 'Wachtwoord moet minimaal 6 tekens zijn';
                             }
                             return null;
                           },
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.lock_outlined),
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.lock_outlined),
                             labelText: 'Wachtwoord',
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                _isPasswordObscured.value =
-                                    !_isPasswordObscured.value;
-                              },
-                              icon: Icon(
-                                _isPasswordObscured.value
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                              ),
-                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
