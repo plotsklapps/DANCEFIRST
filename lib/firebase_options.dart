@@ -21,13 +21,25 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return android;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for android - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -42,47 +54,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBfDwkYpczkJTE1zb1_EX0IM6dTcnA9GLo',
-    appId: '1:168938787122:web:22201fe7aedd04588e872b',
+    appId: '1:168938787122:web:2e1d9537c36153228e872b',
     messagingSenderId: '168938787122',
     projectId: 'plotsklapps-dancefirst',
     authDomain: 'plotsklapps-dancefirst.firebaseapp.com',
     storageBucket: 'plotsklapps-dancefirst.firebasestorage.app',
-    measurementId: 'G-2D4XTCJNY9',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB7tx8hvUpbGcqaGjZVXZyXm6YlIsRkyVk',
-    appId: '1:168938787122:android:86b0f0d57e7a84408e872b',
-    messagingSenderId: '168938787122',
-    projectId: 'plotsklapps-dancefirst',
-    storageBucket: 'plotsklapps-dancefirst.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA9dx6cs08L8RSAg7P_QQt05Z2ZVPlZf48',
-    appId: '1:168938787122:ios:8806ce88758554408e872b',
-    messagingSenderId: '168938787122',
-    projectId: 'plotsklapps-dancefirst',
-    storageBucket: 'plotsklapps-dancefirst.firebasestorage.app',
-    iosBundleId: 'dev.plotsklapps.dancefirst',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyA9dx6cs08L8RSAg7P_QQt05Z2ZVPlZf48',
-    appId: '1:168938787122:ios:8806ce88758554408e872b',
-    messagingSenderId: '168938787122',
-    projectId: 'plotsklapps-dancefirst',
-    storageBucket: 'plotsklapps-dancefirst.firebasestorage.app',
-    iosBundleId: 'dev.plotsklapps.dancefirst',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBfDwkYpczkJTE1zb1_EX0IM6dTcnA9GLo',
-    appId: '1:168938787122:web:22201fe7aedd04588e872b',
-    messagingSenderId: '168938787122',
-    projectId: 'plotsklapps-dancefirst',
-    authDomain: 'plotsklapps-dancefirst.firebaseapp.com',
-    storageBucket: 'plotsklapps-dancefirst.firebasestorage.app',
-    measurementId: 'G-2D4XTCJNY9',
+    measurementId: 'G-M5QFREE8CP',
   );
 }
