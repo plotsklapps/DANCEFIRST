@@ -1,6 +1,5 @@
 import 'package:dancefirst/screens/admin/tabs/abonnementen_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/boekingen_tab.dart';
-import 'package:dancefirst/screens/admin/tabs/huidig_rooster_tab.dart';
 import 'package:dancefirst/screens/admin/tabs/vast_rooster_tab.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +20,7 @@ class _AdminDashboardState extends State<AdminDashboard>
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 4,
+      length: 3,
       vsync: this,
     );
   }
@@ -40,14 +39,7 @@ class _AdminDashboardState extends State<AdminDashboard>
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(
-              icon: Icon(Icons.calendar_month_outlined),
-              text: 'Vast Rooster',
-            ),
-            Tab(
-              icon: Icon(Icons.edit_calendar_outlined),
-              text: 'Huidig Rooster',
-            ),
+            Tab(icon: Icon(Icons.calendar_month_outlined), text: 'Rooster'),
             Tab(icon: Icon(Icons.euro_outlined), text: 'Abonnementen'),
             Tab(icon: Icon(Icons.person_outlined), text: 'Klanten'),
           ],
@@ -57,7 +49,6 @@ class _AdminDashboardState extends State<AdminDashboard>
         controller: _tabController,
         children: const <Widget>[
           VastRoosterTab(),
-          HuidigRoosterTab(),
           AbonnementenTab(),
           KlantenTab(),
         ],
