@@ -1,6 +1,6 @@
-import 'package:dancefirst/screens/admin/tabs/abonnementen_tab.dart';
-import 'package:dancefirst/screens/admin/tabs/boekingen_tab.dart';
-import 'package:dancefirst/screens/admin/tabs/vast_rooster_tab.dart';
+import 'package:dancefirst/screens/admin/abonnementen_tab.dart';
+import 'package:dancefirst/screens/admin/klanten_tab.dart';
+import 'package:dancefirst/screens/admin/vast_rooster_tab.dart';
 import 'package:flutter/material.dart';
 
 class AdminDashboard extends StatefulWidget {
