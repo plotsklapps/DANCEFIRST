@@ -31,6 +31,12 @@
 
   <title>dancefirst</title>
   <link rel="manifest" href="manifest.json">
+  <!-- Conditionally enable Firebase App Check Debug Token for local development -->
+  <script>
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      self.FIREBASE_APPCHECK_DEBUG_TOKEN = '7F0A0B0B-C8CA-49D3-A09E-20B16D7E6D6E';
+    }
+  </script>
 </head>
 <body>
   <!--
