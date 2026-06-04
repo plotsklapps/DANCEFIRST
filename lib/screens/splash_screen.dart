@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dancefirst/screens/home_screen.dart';
+import 'package:dancefirst/screens/homescreen/home_screen.dart';
 import 'package:dancefirst/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
