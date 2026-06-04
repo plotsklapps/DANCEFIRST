@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dancefirst/screens/auth/auth_screens.dart';
 import 'package:dancefirst/screens/home_screen.dart';
+import 'package:dancefirst/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -77,7 +77,7 @@ class SplashView extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Image.asset('assets/dfLogoBlack.png', width: 200),
             const SizedBox(height: 32),
             const SizedBox(width: 200, child: LinearProgressIndicator()),
@@ -125,7 +125,7 @@ class _VerificationViewState extends State<VerificationView> {
           padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               const CircularProgressIndicator(),
               const SizedBox(height: 16),
               Text('Verifieer je e-mailadres voor ${widget.user.email}'),

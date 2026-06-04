@@ -5,8 +5,9 @@ import 'package:dancefirst/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:signals/signals_flutter.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends SignalStatefulWidget {
   const HomeScreen({super.key});
 
   @override
@@ -19,34 +20,19 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirestoreService _firestore = FirestoreService();
   final PageController _pageController = PageController();
 
-  int _currentIndex = 0;
+  final Signal<int> _currentIndex = signal<int>(
+    0,
+    options: const SignalOptions<int>(
+      name: '_currentIndex',
+    ),
+  );
 
-  final List<String> _titles = const <String>[
+  final List<String> _appbarTitles = const <String>[
     'DanceFirst',
     'Rooster',
     'Tarieven',
     'Nieuws',
     'Contact',
-  ];
-
-  final List<Widget> _pages = const <Widget>[
-    Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(Icons.star, size: 80),
-          SizedBox(height: 16),
-          Text(
-            'Welkom bij DanceFirst!',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    ),
-    RoosterScreen(),
-    TarievenScreen(),
-    Center(child: Text('Nieuws Content')),
-    Center(child: Text('Contact Content')),
   ];
 
   @override
@@ -56,12 +42,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return FutureBuilder<String>(
       future: _firestore.getUserRole(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset('assets/dfLogoBlack.png', width: 200),
+                  const SizedBox(height: 32),
+                  const SizedBox(width: 200, child: LinearProgressIndicator()),
+                ],
+              ),
+            ),
+          );
+        }
         final String role = snapshot.data ?? 'client';
         final User? user = FirebaseAuth.instance.currentUser;
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(_titles[_currentIndex]),
+            title: Text(_appbarTitles[_currentIndex.value]),
             centerTitle: true,
           ),
           drawer: Drawer(
@@ -92,12 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ListTile(
                     leading: const Icon(Icons.shield),
                     title: const Text('Admin Dashboard'),
-                    onTap: () {
+                    onTap: () async {
                       Navigator.pop(context);
-                      Navigator.push(
+                      await Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const AdminDashboard(),
+                        MaterialPageRoute<void>(
+                          builder: (_) {
+                            return const AdminDashboard();
+                          },
                         ),
                       );
                     },
@@ -105,24 +107,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 ListTile(
                   leading: const Icon(Icons.logout, color: Colors.red),
                   title: const Text('Uitloggen'),
-                  onTap: () => FirebaseAuth.instance.signOut(),
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                  },
                 ),
               ],
             ),
           ),
           body: PageView(
             controller: _pageController,
-            onPageChanged: (int i) => setState(() => _currentIndex = i),
-            children: _pages,
+            onPageChanged: (int i) {
+              _currentIndex.value = i;
+            },
+            children: const <Widget>[
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.star, size: 80),
+                    SizedBox(height: 16),
+                    Text(
+                      'Welkom bij DanceFirst!',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              RoosterScreen(),
+              TarievenScreen(),
+              Center(child: Text('Nieuws Content')),
+              Center(child: Text('Contact Content')),
+            ],
           ),
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            currentIndex: _currentIndex,
-            onTap: (int i) => _pageController.animateToPage(
-              i,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            ),
+            currentIndex: _currentIndex.value,
+            onTap: (int i) async {
+              await _pageController.animateToPage(
+                i,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(
