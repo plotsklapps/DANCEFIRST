@@ -1,5 +1,5 @@
 import 'package:dancefirst/firebase_options.dart';
-import 'package:dancefirst/screens/loadingscreen/auth_gate.dart';
+import 'package:dancefirst/auth_gate.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';

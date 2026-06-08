@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:dancefirst/screens/homescreen/home_screen.dart';
-import 'package:dancefirst/screens/loadingscreen/loading_screen.dart';
-import 'package:dancefirst/screens/loadingscreen/verification_screen.dart';
+import 'package:dancefirst/screens/loading_screen.dart';
 import 'package:dancefirst/screens/onboardingscreen/onboarding_screen.dart';
+import 'package:dancefirst/screens/onboardingscreen/verification_screen.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,17 +18,17 @@ class AuthGate extends StatefulWidget {
 }
 
 class _AuthGateState extends State<AuthGate> {
-  bool _showSplash = true;
   StreamSubscription<User?>? _authSubscription;
   User? _currentUser;
+  String? _userRole;
+  bool _showSplash = true;
   bool _isCheckingVerification = false;
   bool _isVerified = false;
-  String? _userRole;
 
   @override
   void initState() {
     super.initState();
-    // Show splash animation for at least 2 seconds on app launch
+    // Show 2-sec LoadingScreen.
     Future<void>.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -37,6 +37,7 @@ class _AuthGateState extends State<AuthGate> {
       }
     });
 
+    // Subscribe to changes in User Object.
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen((
       User? user,
     ) {
@@ -46,7 +47,7 @@ class _AuthGateState extends State<AuthGate> {
           _isVerified = user?.emailVerified ?? false;
         });
         if (user != null) {
-          _checkVerificationAndLoadRole();
+          unawaited(_checkVerificationAndLoadRole());
         }
       }
     });
@@ -54,7 +55,8 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   void dispose() {
-    _authSubscription?.cancel();
+    // Kill subscription.
+    unawaited(_authSubscription?.cancel());
     super.dispose();
   }
 
@@ -82,7 +84,7 @@ class _AuthGateState extends State<AuthGate> {
         }
       }
     } on Exception catch (_) {
-      // Silent catch
+      // Silent catch.
     } finally {
       if (mounted) {
         setState(() {
@@ -94,27 +96,27 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Show splash screen on initial startup
+    // On startup, show LoadingScreen.
     if (_showSplash || _isCheckingVerification) {
       return const LoadingScreen();
     }
 
-    // 2. If not logged in, show onboarding/login
+    // If not logged in, show OnboardingScreen.
     if (_currentUser == null) {
       return const OnboardingScreen();
     }
 
-    // 3. If logged in but not verified, show verification screen
+    // If logged in but not verified, show VerificationScreen.
     if (!_isVerified) {
       return VerificationScreen(
         user: _currentUser!,
-        onVerified: () {
-          _checkVerificationAndLoadRole();
+        onVerified: () async {
+          await _checkVerificationAndLoadRole();
         },
       );
     }
 
-    // 4. If logged in and verified, show home screen
+    // If logged in and verified, show HomeScreen.
     return HomeScreen(role: _userRole ?? 'client');
   }
 }
