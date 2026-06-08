@@ -4,7 +4,6 @@ import 'package:dancefirst/services/firebase_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({
@@ -96,22 +95,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'E-mail Verificatie',
-          style: GoogleFonts.questrial(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.logout_outlined),
-            tooltip: 'Uitloggen',
-            onPressed: () async {
-              await FirebaseService().signOut();
-            },
-          ),
-        ],
-      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -156,47 +139,41 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           ),
                           const SizedBox(height: 24),
 
-                          // Title
+                          // TITLE.
                           Text(
                             'Verifieer je e-mailadres',
                             textAlign: TextAlign.center,
-                            style: theme.textTheme.headlineLarge!.copyWith(
+                            style: theme.textTheme.headlineMedium!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
 
-                          // Text
-                          Text(
+                          // TEXT.
+                          const Text(
                             'We hebben een verificatielink gestuurd naar:',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 8),
                           Text(
                             widget.user.email ?? '',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 15,
+                            style: theme.textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 24),
 
-                          // Spam Warning Alert Banner
+                          // SPAM BANNER.
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.errorContainer
-                                  .withValues(alpha: 0.4),
+                              color: theme.colorScheme.errorContainer.withAlpha(
+                                100,
+                              ),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: theme.colorScheme.error.withValues(
-                                  alpha: 0.2,
-                                ),
+                                color: theme.colorScheme.error.withAlpha(50),
                               ),
                             ),
                             child: Row(
@@ -205,7 +182,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                 Icon(
                                   Icons.warning_amber_rounded,
                                   color: theme.colorScheme.error,
-                                  size: 20,
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
@@ -215,25 +191,25 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                     children: <Widget>[
                                       Text(
                                         'Geen mail ontvangen?',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: theme
-                                              .colorScheme
-                                              .onErrorContainer,
-                                        ),
+                                        style: theme.textTheme.bodyMedium!
+                                            .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: theme
+                                                  .colorScheme
+                                                  .onErrorContainer,
+                                            ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Controleer altijd je spam- of ongewenste e-mailfolder. Firebase verificatiemails komen daar helaas geregeld in terecht.',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: theme
-                                              .colorScheme
-                                              .onErrorContainer
-                                              .withValues(alpha: 0.85),
-                                          height: 1.4,
-                                        ),
+                                        'Controleer altijd je spam- of '
+                                        'ongewenste e-mailfolder. Onze '
+                                        'verificatiemails komen daar helaas geregeld in terecht.',
+                                        style: theme.textTheme.bodySmall!
+                                            .copyWith(
+                                              color: theme
+                                                  .colorScheme
+                                                  .onErrorContainer,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -241,22 +217,19 @@ class _VerificationScreenState extends State<VerificationScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 28),
+                          const SizedBox(height: 24),
 
-                          // Progress Indicator to show active status
-                          SizedBox(
-                            width: 150,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(2),
-                              child: const LinearProgressIndicator(),
+                          // LOADING INDICATOR.
+                          const SizedBox(
+                            width: 180,
+                            child: LinearProgressIndicator(
+                              year2023: false,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Wachten op verificatie...',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.onSurfaceVariant,
+                            style: theme.textTheme.bodySmall!.copyWith(
                               fontStyle: FontStyle.italic,
                             ),
                           ),
@@ -267,15 +240,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
                   const SizedBox(height: 32),
 
-                  // Actions
+                  // ACTIONS.
                   if (_cooldownSeconds > 0)
                     Text(
                       'Je kunt de mail opnieuw sturen over $_cooldownSeconds seconden',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
                     )
                   else
                     FilledButton.icon(
@@ -284,31 +253,22 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           ? const SizedBox(
                               height: 16,
                               width: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
+                              child: CircularProgressIndicator(year2023: false),
                             )
                           : const Icon(Icons.send_rounded, size: 16),
                       label: const Text('Mail opnieuw verzenden'),
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
                     ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 24),
 
                   TextButton.icon(
                     onPressed: () async {
                       await FirebaseService().signOut();
                     },
-                    icon: const Icon(Icons.arrow_back_rounded, size: 16),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_outlined,
+                      size: 16,
+                    ),
                     label: const Text('Terug naar inloggen'),
                     style: TextButton.styleFrom(
                       foregroundColor: theme.colorScheme.onSurfaceVariant,
