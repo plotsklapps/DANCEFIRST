@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,114 +46,132 @@ class _HomeScreenState extends State<HomeScreen> {
         user: user,
         role: widget.role,
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (int i) {
-          setState(() {
-            _currentIndex = i;
-          });
-        },
-        children: <Widget>[
-          StreamBuilder<List<Map<String, dynamic>>>(
-            stream: _firestoreService.getProfilesStream(user?.uid ?? ''),
-            builder:
-                (
-                  BuildContext context,
-                  AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
-                ) {
-                  final List<Map<String, dynamic>>? profiles = snapshot.data;
-                  if (profiles == null || profiles.isEmpty) {
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
+              theme.colorScheme.surface,
+              theme.colorScheme.surface,
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
+            ],
+            stops: const <double>[0, 0.4, 0.8, 1],
+          ),
+        ),
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (int i) {
+            setState(() {
+              _currentIndex = i;
+            });
+          },
+          children: <Widget>[
+            StreamBuilder<List<Map<String, dynamic>>>(
+              stream: _firestoreService.getProfilesStream(user?.uid ?? ''),
+              builder:
+                  (
+                    BuildContext context,
+                    AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
+                  ) {
+                    final List<Map<String, dynamic>>? profiles = snapshot.data;
+                    if (profiles == null || profiles.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Icon(Icons.star, size: 80),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Welkom bij DanceFirst!',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            FilledButton.icon(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => const RegistrationScreen(),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.add_reaction_outlined),
+                              label: const Text('Schrijf je hier in'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    // Set default active profile if null.
+                    if (_activeProfileId == null ||
+                        !profiles.any(
+                          (Map<String, dynamic> p) =>
+                              p['id'] == _activeProfileId,
+                        )) {
+                      _activeProfileId = profiles.first['id'] as String;
+                    }
+
+                    final Map<String, dynamic> activeProfile = profiles
+                        .firstWhere(
+                          (Map<String, dynamic> p) =>
+                              p['id'] == _activeProfileId,
+                        );
+
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const Icon(Icons.star, size: 80),
+                          Icon(
+                            Icons.star,
+                            size: 80,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                           const SizedBox(height: 16),
-                          const Text(
-                            'Welkom bij DanceFirst!',
-                            style: TextStyle(
+                          Text(
+                            'Hoi, ${activeProfile['firstName']}!',
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 32),
-                          FilledButton.icon(
-                            onPressed: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (_) => const RegistrationScreen(),
-                                ),
+                          const SizedBox(height: 24),
+                          const Text('Wissel van profiel:'),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            children: profiles.map((Map<String, dynamic> p) {
+                              final bool isSelected =
+                                  p['id'] == _activeProfileId;
+                              return ChoiceChip(
+                                label: Text(p['firstName'] as String),
+                                selected: isSelected,
+                                onSelected: (bool selected) {
+                                  if (selected) {
+                                    setState(() {
+                                      _activeProfileId = p['id'] as String?;
+                                    });
+                                  }
+                                },
                               );
-                            },
-                            icon: const Icon(Icons.add_reaction_outlined),
-                            label: const Text('Schrijf je hier in'),
+                            }).toList(),
                           ),
                         ],
                       ),
                     );
-                  }
-
-                  // Set default active profile if null.
-                  if (_activeProfileId == null ||
-                      !profiles.any(
-                        (Map<String, dynamic> p) => p['id'] == _activeProfileId,
-                      )) {
-                    _activeProfileId = profiles.first['id'] as String;
-                  }
-
-                  final Map<String, dynamic> activeProfile = profiles
-                      .firstWhere(
-                        (Map<String, dynamic> p) => p['id'] == _activeProfileId,
-                      );
-
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.star,
-                          size: 80,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Hoi, ${activeProfile['firstName']}!',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text('Wissel van profiel:'),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          children: profiles.map((Map<String, dynamic> p) {
-                            final bool isSelected = p['id'] == _activeProfileId;
-                            return ChoiceChip(
-                              label: Text(p['firstName'] as String),
-                              selected: isSelected,
-                              onSelected: (bool selected) {
-                                if (selected) {
-                                  setState(() {
-                                    _activeProfileId = p['id'] as String?;
-                                  });
-                                }
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-          ),
-          const RoosterScreen(),
-          const TarievenScreen(),
-          const Center(child: Text('Nieuws Content')),
-          const Center(child: Text('Contact Content')),
-        ],
+                  },
+            ),
+            const RoosterScreen(),
+            const TarievenScreen(),
+            const Center(child: Text('Nieuws Content')),
+            const Center(child: Text('Contact Content')),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
