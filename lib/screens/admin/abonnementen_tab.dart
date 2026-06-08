@@ -18,8 +18,8 @@ class _AbonnementenTabState extends State<AbonnementenTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ModalService.showModal(
+        onPressed: () async {
+          await ModalService.showModal(
             context: context,
             child: const EditSubscriptionModal(),
           );
@@ -60,14 +60,14 @@ class _AbonnementenTabState extends State<AbonnementenTab> {
                   if (kids.isNotEmpty) ...<Widget>[
                     const SectionHeader(title: 'DanceKids (4-18 jaar)'),
                     ...kids.map(
-                      (Map<String, dynamic> s) => _buildSubscriptionCard(s),
+                      _buildSubscriptionCard,
                     ),
                     const SizedBox(height: 24),
                   ],
                   if (adults.isNotEmpty) ...<Widget>[
                     const SectionHeader(title: 'DanceFirst (18+)'),
                     ...adults.map(
-                      (Map<String, dynamic> s) => _buildSubscriptionCard(s),
+                      _buildSubscriptionCard,
                     ),
                   ],
                 ],

@@ -1,9 +1,10 @@
 import 'package:dancefirst/screens/homescreen/home_screen.dart';
-import 'package:dancefirst/screens/loadingscreen/login_screen.dart';
+import 'package:dancefirst/screens/loadingscreen/onboarding_screen.dart';
 import 'package:dancefirst/screens/loadingscreen/verification_screen.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
@@ -13,7 +14,7 @@ class LoadingScreen extends StatelessWidget {
 
     // User is not logged in.
     if (user == null) {
-      return const LoginScreen();
+      return const OnboardingScreen();
     }
 
     await user.reload();
@@ -28,27 +29,81 @@ class LoadingScreen extends StatelessWidget {
     return HomeScreen(role: role);
   }
 
+  Widget _buildLoadingIndicator(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[
+              theme.colorScheme.primaryContainer.withOpacity(0.4),
+              theme.colorScheme.surface,
+              theme.colorScheme.surface,
+              theme.colorScheme.primary.withOpacity(0.08),
+            ],
+            stops: const <double>[0.0, 0.4, 0.8, 1.0],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Animated pulsing logo or icon wrapper
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.8, end: 1.0),
+                duration: const Duration(seconds: 1),
+                curve: Curves.easeInOut,
+                builder: (BuildContext context, double scale, Widget? child) {
+                  return Transform.scale(
+                    scale: scale,
+                    child: child,
+                  );
+                },
+                child: Image.asset(
+                  'assets/dfLogoBlack.png',
+                  width: 180,
+                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                    return Text(
+                      'DanceFirst',
+                      style: GoogleFonts.questrial(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                        letterSpacing: 2,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 48),
+              // Modern, thin, custom-themed loading indicator
+              SizedBox(
+                width: 160,
+                height: 4,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(
+                    color: theme.colorScheme.primary,
+                    backgroundColor: theme.colorScheme.primary.withOpacity(0.15),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('assets/dfLogoBlack.png', width: 200),
-                  const SizedBox(height: 32),
-                  const SizedBox(
-                    width: 200,
-                    child: LinearProgressIndicator(),
-                  ),
-                ],
-              ),
-            ),
-          );
+          return _buildLoadingIndicator(context);
         }
 
         final User? user = snapshot.data;
@@ -58,21 +113,7 @@ class LoadingScreen extends StatelessWidget {
           builder:
               (BuildContext context, AsyncSnapshot<Widget> screenSnapshot) {
                 if (!screenSnapshot.hasData) {
-                  return Scaffold(
-                    body: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Image.asset('assets/dfLogoBlack.png', width: 200),
-                          const SizedBox(height: 32),
-                          const SizedBox(
-                            width: 200,
-                            child: LinearProgressIndicator(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  return _buildLoadingIndicator(context);
                 }
                 return screenSnapshot.data!;
               },
@@ -81,3 +122,4 @@ class LoadingScreen extends StatelessWidget {
     );
   }
 }
+
