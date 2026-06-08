@@ -52,7 +52,7 @@ class LoadingScreen extends StatelessWidget {
             children: <Widget>[
               // Animated pulsing logo or icon wrapper
               TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.8, end: 1.0),
+                tween: Tween<double>(begin: 0.8, end: 1),
                 duration: const Duration(seconds: 1),
                 curve: Curves.easeInOut,
                 builder: (BuildContext context, double scale, Widget? child) {
@@ -91,8 +91,8 @@ class LoadingScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                   child: LinearProgressIndicator(
                     color: theme.colorScheme.primary,
-                    backgroundColor: theme.colorScheme.primary.withOpacity(
-                      0.15,
+                    backgroundColor: theme.colorScheme.primary.withValues(
+                      alpha: 0.15,
                     ),
                   ),
                 ),

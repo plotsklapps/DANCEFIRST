@@ -189,10 +189,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.errorContainer
-                                  .withOpacity(0.4),
+                                  .withValues(alpha: 0.4),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: theme.colorScheme.error.withOpacity(0.2),
+                                color: theme.colorScheme.error.withValues(
+                                  alpha: 0.2,
+                                ),
                               ),
                             ),
                             child: Row(
@@ -227,7 +229,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                           color: theme
                                               .colorScheme
                                               .onErrorContainer
-                                              .withOpacity(0.85),
+                                              .withValues(alpha: 0.85),
                                           height: 1.4,
                                         ),
                                       ),
