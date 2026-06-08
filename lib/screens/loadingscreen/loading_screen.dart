@@ -1,6 +1,6 @@
 import 'package:dancefirst/screens/homescreen/home_screen.dart';
-import 'package:dancefirst/screens/loadingscreen/onboarding_screen.dart';
 import 'package:dancefirst/screens/loadingscreen/verification_screen.dart';
+import 'package:dancefirst/screens/onboardingscreen/onboarding_screen.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -64,17 +64,22 @@ class LoadingScreen extends StatelessWidget {
                 child: Image.asset(
                   'assets/dfLogoBlack.png',
                   width: 180,
-                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                    return Text(
-                      'DanceFirst',
-                      style: GoogleFonts.questrial(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
-                        letterSpacing: 2,
-                      ),
-                    );
-                  },
+                  errorBuilder:
+                      (
+                        BuildContext context,
+                        Object error,
+                        StackTrace? stackTrace,
+                      ) {
+                        return Text(
+                          'DanceFirst',
+                          style: GoogleFonts.questrial(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                            letterSpacing: 2,
+                          ),
+                        );
+                      },
                 ),
               ),
               const SizedBox(height: 48),
@@ -86,7 +91,9 @@ class LoadingScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                   child: LinearProgressIndicator(
                     color: theme.colorScheme.primary,
-                    backgroundColor: theme.colorScheme.primary.withOpacity(0.15),
+                    backgroundColor: theme.colorScheme.primary.withOpacity(
+                      0.15,
+                    ),
                   ),
                 ),
               ),
@@ -122,4 +129,3 @@ class LoadingScreen extends StatelessWidget {
     );
   }
 }
-
