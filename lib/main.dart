@@ -1,5 +1,5 @@
 import 'package:dancefirst/firebase_options.dart';
-import 'package:dancefirst/screens/loadingscreen/loading_screen.dart';
+import 'package:dancefirst/screens/loadingscreen/auth_gate.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,7 +38,7 @@ class MainEntry extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan),
           fontFamily: GoogleFonts.questrial().fontFamily,
         ),
-        home: const LoadingScreen(),
+        home: const AuthGate(),
       ),
     );
   }

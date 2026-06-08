@@ -7,8 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class VerificationScreen extends StatefulWidget {
-  const VerificationScreen({required this.user, super.key});
+  const VerificationScreen({
+    required this.user,
+    required this.onVerified,
+    super.key,
+  });
   final User user;
+  final VoidCallback onVerified;
 
   @override
   State<VerificationScreen> createState() {
@@ -25,15 +30,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
   @override
   void initState() {
     super.initState();
-    // Poll Firebase Auth status every 2 seconds
     _reloadTimer = Timer.periodic(const Duration(seconds: 2), (_) async {
       await widget.user.reload();
       final User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null && currentUser.emailVerified) {
         _reloadTimer?.cancel();
-        // Since authStateChanges might not fire automatically on reload,
-        // we can force a token refresh or reload by signing in again
-        // or letting the auth state update itself.
+        widget.onVerified();
       }
     });
   }
