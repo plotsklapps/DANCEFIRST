@@ -132,7 +132,7 @@ class AuthSlide extends SignalWidget {
                       ),
                     ),
 
-                    // Forms Content
+                    // FORM.
                     Padding(
                       padding: const EdgeInsets.all(24),
                       child: Form(
@@ -144,18 +144,14 @@ class AuthSlide extends SignalWidget {
                               isLoginVal
                                   ? 'Welkom terug! Log in op je account.'
                                   : 'Maak een nieuw account aan.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
+                              style: theme.textTheme.labelLarge,
                             ),
                             const SizedBox(height: 20),
 
-                            // Email input field
+                            // EMAIL.
                             TextFormField(
                               controller: emailController,
                               keyboardType: TextInputType.emailAddress,
-                              style: const TextStyle(fontSize: 15),
                               validator: (String? value) {
                                 if (value == null ||
                                     value.isEmpty ||
@@ -165,16 +161,12 @@ class AuthSlide extends SignalWidget {
                                 }
                                 return null;
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'E-mailadres',
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.email_outlined,
-                                  size: 20,
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
+                                contentPadding: EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 16,
                                 ),
@@ -182,11 +174,10 @@ class AuthSlide extends SignalWidget {
                             ),
                             const SizedBox(height: 16),
 
-                            // Password input field
+                            // PASSWORD.
                             TextFormField(
                               controller: passwordController,
                               obscureText: obscurePasswordVal,
-                              style: const TextStyle(fontSize: 15),
                               validator: (String? value) {
                                 if (value == null || value.length < 6) {
                                   return 'Wachtwoord moet minimaal 6 tekens zijn';
@@ -197,21 +188,16 @@ class AuthSlide extends SignalWidget {
                                 labelText: 'Wachtwoord',
                                 prefixIcon: const Icon(
                                   Icons.lock_outlined,
-                                  size: 20,
                                 ),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     obscurePasswordVal
                                         ? Icons.visibility_off_outlined
                                         : Icons.visibility_outlined,
-                                    size: 20,
                                   ),
                                   onPressed: () {
                                     obscurePassword.value = !obscurePasswordVal;
                                   },
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -221,36 +207,20 @@ class AuthSlide extends SignalWidget {
                             ),
                             const SizedBox(height: 24),
 
-                            // Submit Button
+                            // SUBMIT BUTTON.
                             FilledButton(
                               onPressed: isLoadingVal ? null : onSubmit,
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
                               child: isLoadingVal
                                   ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        color: Colors.white,
-                                      ),
+                                      width: double.infinity,
+                                      child: LinearProgressIndicator(),
                                     )
                                   : Text(
                                       isLoginVal ? 'Inloggen' : 'Registreren',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
                                     ),
                             ),
 
-                            // Forgot Password Text Button (Only for login)
+                            // FORGOT PASSWORD.
                             if (isLoginVal) ...<Widget>[
                               const SizedBox(height: 12),
                               TextButton(
@@ -267,9 +237,6 @@ class AuthSlide extends SignalWidget {
                                     );
                                   }
                                 },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: theme.colorScheme.primary,
-                                ),
                                 child: const Text('Wachtwoord vergeten?'),
                               ),
                             ],
@@ -280,44 +247,8 @@ class AuthSlide extends SignalWidget {
                   ],
                 ),
               ),
-
-              const SizedBox(height: 24),
-
-              // Button to go back to info slides
-              TextButton.icon(
-                onPressed: onPreviousPage,
-                icon: const Icon(Icons.arrow_back_rounded, size: 16),
-                label: const Text('Bekijk info slides'),
-                style: TextButton.styleFrom(
-                  foregroundColor: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Preview to test layout
-class AuthSlidePreview extends StatelessWidget {
-  const AuthSlidePreview({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: AuthSlide(
-          firebaseService: FirebaseService(),
-          emailController: TextEditingController(),
-          passwordController: TextEditingController(),
-          formKey: GlobalKey<FormState>(),
-          isLogin: signal<bool>(true),
-          isLoading: signal<bool>(false),
-          obscurePassword: signal<bool>(true),
-          onPreviousPage: () {},
-          onSubmit: () async {},
         ),
       ),
     );

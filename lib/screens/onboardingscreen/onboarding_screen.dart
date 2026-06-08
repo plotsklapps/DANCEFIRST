@@ -155,30 +155,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
 
               // BOTTOM NAVIGATION.
-              if (currentPageVal < 3)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      // PREVIOUS BUTTON (Conditional).
-                      Opacity(
-                        opacity: currentPageVal > 0 ? 1.0 : 0.0,
-                        child: TextButton(
-                          onPressed: currentPageVal > 0 ? _previousPage : null,
-                          child: Text(
-                            'Vorige',
-                            style: theme.textTheme.labelLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    // PREVIOUS BUTTON (Conditional).
+                    Opacity(
+                      opacity: currentPageVal > 0 ? 1.0 : 0.0,
+                      child: TextButton(
+                        onPressed: currentPageVal > 0 ? _previousPage : null,
+                        child: Text(
+                          'Vorige',
+                          style: theme.textTheme.labelLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                       ),
+                    ),
 
-                      // DOT INDICATORS.
+                    // DOT INDICATORS (Conditional).
+                    if (currentPageVal < 3)
                       Row(
-                        children: List<Widget>.generate(4, (int index) {
+                        children: List<Widget>.generate(3, (int index) {
                           final bool isActive = index == currentPageVal;
                           return AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
@@ -197,7 +197,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         }),
                       ),
 
-                      // NEXT BUTTON.
+                    // NEXT BUTTON (Conditional).
+                    if (currentPageVal < 3)
                       FilledButton(
                         onPressed: _nextPage,
                         child: const Row(
@@ -208,10 +209,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             Icon(Icons.navigate_next),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
+                      )
+                    else
+                      const SizedBox(
+                        width: 48,
+                      ), // Spacer to keep layout balanced
+                  ],
                 ),
+              ),
             ],
           ),
         ),
