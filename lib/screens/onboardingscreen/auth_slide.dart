@@ -49,7 +49,7 @@ class AuthSlide extends SignalWidget {
                   children: <Widget>[
                     // TAB TOGGLE.
                     ColoredBox(
-                      color: theme.colorScheme.primary.withValues(alpha: 240),
+                      color: theme.cardColor,
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -65,7 +65,7 @@ class AuthSlide extends SignalWidget {
                                 decoration: BoxDecoration(
                                   color: isLoginVal
                                       ? theme.colorScheme.surface
-                                      : theme.colorScheme.primary.withAlpha(10),
+                                      : theme.cardColor,
                                   border: Border(
                                     bottom: BorderSide(
                                       color: isLoginVal
@@ -103,7 +103,7 @@ class AuthSlide extends SignalWidget {
                                 decoration: BoxDecoration(
                                   color: !isLoginVal
                                       ? theme.colorScheme.surface
-                                      : theme.colorScheme.primary.withAlpha(10),
+                                      : theme.cardColor,
                                   border: Border(
                                     bottom: BorderSide(
                                       color: !isLoginVal

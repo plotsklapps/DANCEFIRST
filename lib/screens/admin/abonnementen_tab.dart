@@ -111,8 +111,8 @@ class _AbonnementenTabState extends State<AbonnementenTab> {
           children: <Widget>[
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blue),
-              onPressed: () {
-                ModalService.showModal(
+              onPressed: () async {
+                await ModalService.showModal(
                   context: context,
                   child: EditSubscriptionModal(subscription: s),
                 );
@@ -120,8 +120,8 @@ class _AbonnementenTabState extends State<AbonnementenTab> {
             ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                ModalService.showModal(
+              onPressed: () async {
+                await ModalService.showModal(
                   context: context,
                   child: DeleteSubscriptionModal(subscription: s),
                 );

@@ -38,12 +38,12 @@ class LoadingScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: <Color>[
-              theme.colorScheme.primaryContainer.withOpacity(0.4),
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
               theme.colorScheme.surface,
               theme.colorScheme.surface,
-              theme.colorScheme.primary.withOpacity(0.08),
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
             ],
-            stops: const <double>[0.0, 0.4, 0.8, 1.0],
+            stops: const <double>[0, 0.4, 0.8, 1],
           ),
         ),
         child: Center(

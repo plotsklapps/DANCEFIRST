@@ -116,10 +116,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: <Color>[
-              theme.colorScheme.primaryContainer.withOpacity(0.3),
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
               theme.colorScheme.surface,
-              theme.colorScheme.primary.withOpacity(0.05),
+              theme.colorScheme.surface,
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
             ],
+            stops: const <double>[0, 0.4, 0.8, 1],
           ),
         ),
         child: SafeArea(
@@ -129,25 +131,21 @@ class _VerificationScreenState extends State<VerificationScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // Verification Card
+                  // VERIFICATION CARD.
                   Card(
-                    elevation: 4,
-                    shadowColor: theme.colorScheme.primary.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 32,
+                      ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          // Icon
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.08),
-                              shape: BoxShape.circle,
-                            ),
+                          // ICON.
+                          CircleAvatar(
+                            radius: 64,
+                            backgroundColor: theme.colorScheme.primary
+                                .withAlpha(50),
                             child: Icon(
                               Icons.mark_email_read_rounded,
                               size: 64,
@@ -160,10 +158,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           Text(
                             'Verifieer je e-mailadres',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.questrial(
-                              fontSize: 22,
+                            style: theme.textTheme.headlineLarge!.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -192,7 +188,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.errorContainer.withOpacity(0.4),
+                              color: theme.colorScheme.errorContainer
+                                  .withOpacity(0.4),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: theme.colorScheme.error.withOpacity(0.2),
@@ -209,14 +206,17 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         'Geen mail ontvangen?',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: theme.colorScheme.onErrorContainer,
+                                          color: theme
+                                              .colorScheme
+                                              .onErrorContainer,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -224,7 +224,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                         'Controleer altijd je spam- of ongewenste e-mailfolder. Firebase verificatiemails komen daar helaas geregeld in terecht.',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: theme.colorScheme.onErrorContainer.withOpacity(0.85),
+                                          color: theme
+                                              .colorScheme
+                                              .onErrorContainer
+                                              .withOpacity(0.85),
                                           height: 1.4,
                                         ),
                                       ),
@@ -285,7 +288,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           : const Icon(Icons.send_rounded, size: 16),
                       label: const Text('Mail opnieuw verzenden'),
                       style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
