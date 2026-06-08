@@ -22,10 +22,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final Signal<int> _currentPage = signal<int>(0);
-  final Signal<bool> _isLogin = signal<bool>(true);
-  final Signal<bool> _isLoading = signal<bool>(false);
-  final Signal<bool> _obscurePassword = signal<bool>(true);
+  final Signal<int> _currentPage = signal<int>(
+    0,
+    options: const SignalOptions<int>(name: '_currentPage'),
+  );
+  final Signal<bool> _isLogin = signal<bool>(
+    true,
+    options: const SignalOptions<bool>(name: '_isLogin'),
+  );
+  final Signal<bool> _isLoading = signal<bool>(
+    false,
+    options: const SignalOptions<bool>(name: '_isLoading'),
+  );
+  final Signal<bool> _obscurePassword = signal<bool>(
+    true,
+    options: const SignalOptions<bool>(name: '_obscurePassword'),
+  );
 
   @override
   void dispose() {
@@ -90,10 +102,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: <Color>[
-              theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
               theme.colorScheme.surface,
               theme.colorScheme.surface,
-              theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+              theme.colorScheme.primaryContainer.withValues(alpha: 100),
             ],
             stops: const <double>[0, 0.4, 0.8, 1],
           ),

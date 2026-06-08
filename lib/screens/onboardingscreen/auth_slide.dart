@@ -4,7 +4,19 @@ import 'package:dancefirst/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-class AuthSlide extends StatelessWidget {
+class AuthSlide extends SignalWidget {
+  const AuthSlide({
+    required this.firebaseService,
+    required this.emailController,
+    required this.passwordController,
+    required this.formKey,
+    required this.isLogin,
+    required this.isLoading,
+    required this.obscurePassword,
+    required this.onPreviousPage,
+    required this.onSubmit,
+    super.key,
+  });
   final FirebaseService firebaseService;
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -15,25 +27,12 @@ class AuthSlide extends StatelessWidget {
   final VoidCallback onPreviousPage;
   final Future<void> Function() onSubmit;
 
-  const AuthSlide({
-    super.key,
-    required this.firebaseService,
-    required this.emailController,
-    required this.passwordController,
-    required this.formKey,
-    required this.isLogin,
-    required this.isLoading,
-    required this.obscurePassword,
-    required this.onPreviousPage,
-    required this.onSubmit,
-  });
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isLoginVal = isLogin.watch(context);
-    final bool isLoadingVal = isLoading.watch(context);
-    final bool obscurePasswordVal = obscurePassword.watch(context);
+    final bool isLoginVal = isLogin.value;
+    final bool isLoadingVal = isLoading.value;
+    final bool obscurePasswordVal = obscurePassword.value;
 
     return Center(
       child: ScrollService(
@@ -42,24 +41,22 @@ class AuthSlide extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // Elegant Auth Card
+              // AUTH CARD.
               Card(
                 elevation: 4,
-                shadowColor: theme.colorScheme.primary.withOpacity(0.1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
                 clipBehavior: Clip.hardEdge,
                 child: Column(
                   children: <Widget>[
-                    // Tab-like Toggle Button Header
-                    Container(
-                      color: theme.colorScheme.primary.withOpacity(0.05),
+                    // TAB TOGGLE.
+                    ColoredBox(
+                      color: theme.colorScheme.primary.withValues(alpha: 240),
                       child: Row(
                         children: <Widget>[
                           Expanded(
                             child: InkWell(
-                              onTap: () => isLogin.value = true,
+                              onTap: () {
+                                isLogin.value = true;
+                              },
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 250),
                                 padding: const EdgeInsets.symmetric(
@@ -68,7 +65,7 @@ class AuthSlide extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   color: isLoginVal
                                       ? theme.colorScheme.surface
-                                      : Colors.transparent,
+                                      : theme.colorScheme.primary.withAlpha(10),
                                   border: Border(
                                     bottom: BorderSide(
                                       color: isLoginVal
@@ -81,10 +78,10 @@ class AuthSlide extends StatelessWidget {
                                 child: Text(
                                   'Inloggen',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: theme.textTheme.titleMedium!.copyWith(
                                     fontWeight: isLoginVal
                                         ? FontWeight.bold
-                                        : FontWeight.w500,
+                                        : null,
                                     color: isLoginVal
                                         ? theme.colorScheme.primary
                                         : theme.colorScheme.onSurfaceVariant,
@@ -95,7 +92,9 @@ class AuthSlide extends StatelessWidget {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () => isLogin.value = false,
+                              onTap: () {
+                                isLogin.value = false;
+                              },
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 250),
                                 padding: const EdgeInsets.symmetric(
@@ -104,7 +103,7 @@ class AuthSlide extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   color: !isLoginVal
                                       ? theme.colorScheme.surface
-                                      : Colors.transparent,
+                                      : theme.colorScheme.primary.withAlpha(10),
                                   border: Border(
                                     bottom: BorderSide(
                                       color: !isLoginVal
@@ -117,10 +116,10 @@ class AuthSlide extends StatelessWidget {
                                 child: Text(
                                   'Registreren',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: theme.textTheme.titleMedium!.copyWith(
                                     fontWeight: !isLoginVal
                                         ? FontWeight.bold
-                                        : FontWeight.w500,
+                                        : null,
                                     color: !isLoginVal
                                         ? theme.colorScheme.primary
                                         : theme.colorScheme.onSurfaceVariant,
