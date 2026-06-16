@@ -388,7 +388,7 @@ class _RoosterScreenState extends State<RoosterScreen> {
                   Text('Je wilt boeken voor: $className op $dateStr.'),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedProfileId,
+                    initialValue: selectedProfileId,
                     decoration: const InputDecoration(
                       labelText: 'Kies deelnemer profiel',
                     ),
