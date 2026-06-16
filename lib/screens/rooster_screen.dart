@@ -1,3 +1,4 @@
+import 'package:dancefirst/services/client_state.dart';
 import 'package:dancefirst/services/firestore_service.dart';
 import 'package:dancefirst/services/toast_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -283,8 +284,8 @@ class _RoosterScreenState extends State<RoosterScreen> {
                                                     !isCancelled
                                                 ? FilledButton.tonal(
                                                     onPressed: isAlreadyBooked
-                                                        ? () {
-                                                            _cancelBookingDialog(
+                                                        ? () async {
+                                                            await _cancelBookingDialog(
                                                               dateString,
                                                               classId,
                                                               bookings,
@@ -293,8 +294,8 @@ class _RoosterScreenState extends State<RoosterScreen> {
                                                         : currentBookingsCount >=
                                                               maxParticipants
                                                         ? null // Full
-                                                        : () {
-                                                            _showBookingDialog(
+                                                        : () async {
+                                                            await _showBookingDialog(
                                                               dateString,
                                                               classId,
                                                               c['name']
@@ -325,12 +326,12 @@ class _RoosterScreenState extends State<RoosterScreen> {
     );
   }
 
-  void _showBookingDialog(
+  Future<void> _showBookingDialog(
     String dateStr,
     String classId,
     String className,
     int maxParticipants,
-  ) {
+  ) async {
     if (_currentUser == null) {
       ToastService.showError(
         title: 'Log in',
@@ -339,140 +340,138 @@ class _RoosterScreenState extends State<RoosterScreen> {
       return;
     }
 
-    showDialog<void>(
+    final List<Map<String, dynamic>> profiles =
+        ClientState.instance.sProfiles.value;
+
+    // Filter for adult profiles (since this is an 18+ class)
+    final List<Map<String, dynamic>> adultProfiles = profiles
+        .where((Map<String, dynamic> p) => p['type'] == 'adult')
+        .toList();
+
+    if (adultProfiles.isEmpty) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Geen volwassen profiel'),
+            content: const Text(
+              'Je hebt nog geen volwassen profiel onder dit account. '
+              'Ga naar "Mijn Account" om een profiel aan te maken.',
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    String selectedProfileId = adultProfiles.first['id'] as String;
+    String selectedProfileName =
+        '${adultProfiles.first['firstName'] ?? ''} ${adultProfiles.first['lastName'] ?? ''}'
+            .trim();
+
+    await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return StreamBuilder<List<Map<String, dynamic>>>(
-          stream: _firestore.getProfilesStream(_currentUser.uid),
-          builder:
-              (
-                BuildContext context,
-                AsyncSnapshot<List<Map<String, dynamic>>> snapshot,
-              ) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final List<Map<String, dynamic>> profiles =
-                    snapshot.data ?? <Map<String, dynamic>>[];
-
-                // Filter for adult profiles (since this is an 18+ class)
-                final List<Map<String, dynamic>> adultProfiles = profiles
-                    .where((Map<String, dynamic> p) => p['type'] == 'adult')
-                    .toList();
-
-                if (adultProfiles.isEmpty) {
-                  return AlertDialog(
-                    title: const Text('Geen volwassen profiel'),
-                    content: const Text(
-                      'Je hebt nog geen volwassen profiel onder dit account. '
-                      'Ga naar "Mijn Account" om een profiel aan te maken.',
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return AlertDialog(
+              title: const Text('Les Boeken'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text('Je wilt boeken voor: $className op $dateStr.'),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: selectedProfileId,
+                    decoration: const InputDecoration(
+                      labelText: 'Kies deelnemer profiel',
                     ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                }
-
-                String selectedProfileId = adultProfiles.first['id'] as String;
-                String selectedProfileName =
-                    adultProfiles.first['name'] as String;
-
-                return StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setModalState) {
-                    return AlertDialog(
-                      title: const Text('Les Boeken'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text('Je wilt boeken voor: $className op $dateStr.'),
-                          const SizedBox(height: 16),
-                          DropdownButtonFormField<String>(
-                            initialValue: selectedProfileId,
-                            decoration: const InputDecoration(
-                              labelText: 'Kies deelnemer profiel',
-                            ),
-                            items: adultProfiles.map((Map<String, dynamic> p) {
-                              return DropdownMenuItem<String>(
-                                value: p['id'] as String,
-                                child: Text(p['name'] as String),
-                              );
-                            }).toList(),
-                            onChanged: (String? val) {
-                              if (val != null) {
-                                final Map<String, dynamic> selected =
-                                    adultProfiles.firstWhere(
-                                      (Map<String, dynamic> p) =>
-                                          p['id'] == val,
-                                    );
-                                setModalState(() {
-                                  selectedProfileId = val;
-                                  selectedProfileName =
-                                      selected['name'] as String;
-                                });
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Annuleren'),
-                        ),
-                        FilledButton(
-                          onPressed: () async {
-                            final bool success = await _firestore.bookClass(
-                              date: dateStr,
-                              classId: classId,
-                              profileId: selectedProfileId,
-                              userId: _currentUser.uid,
-                              profileName: selectedProfileName,
-                              maxParticipants: maxParticipants,
-                            );
-
-                            if (success) {
-                              ToastService.showSuccess(
-                                title: 'Succesvol geboekt!',
-                                subtitle: 'Geboekt voor: $selectedProfileName',
-                              );
-                            } else {
-                              ToastService.showError(
-                                title: 'Boekingsfout',
-                                subtitle:
-                                    'Helaas, de les is al volgeboekt '
-                                    '(max. $maxParticipants).',
-                              );
-                            }
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: const Text('Boeking Bevestigen'),
-                        ),
-                      ],
+                    items: adultProfiles.map((Map<String, dynamic> p) {
+                      final String pName =
+                          '${p['firstName'] ?? ''} ${p['lastName'] ?? ''}'
+                              .trim();
+                      return DropdownMenuItem<String>(
+                        value: p['id'] as String,
+                        child: Text(pName),
+                      );
+                    }).toList(),
+                    onChanged: (String? val) {
+                      if (val != null) {
+                        final Map<String, dynamic> selected =
+                            adultProfiles.firstWhere(
+                          (Map<String, dynamic> p) => p['id'] == val,
+                        );
+                        setModalState(() {
+                          selectedProfileId = val;
+                          selectedProfileName =
+                              '${selected['firstName'] ?? ''} ${selected['lastName'] ?? ''}'
+                                  .trim();
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Annuleren'),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    final bool success = await _firestore.bookClass(
+                      date: dateStr,
+                      classId: classId,
+                      profileId: selectedProfileId,
+                      userId: _currentUser.uid,
+                      profileName: selectedProfileName,
+                      maxParticipants: maxParticipants,
                     );
+
+                    if (success) {
+                      ToastService.showSuccess(
+                        title: 'Succesvol geboekt!',
+                        subtitle: 'Geboekt voor: $selectedProfileName',
+                      );
+                    } else {
+                      ToastService.showError(
+                        title: 'Boekingsfout',
+                        subtitle:
+                            'Helaas, de les is al volgeboekt '
+                            '(max. $maxParticipants).',
+                      );
+                    }
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
                   },
-                );
-              },
+                  child: const Text('Boeking Bevestigen'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  void _cancelBookingDialog(
+  Future<void> _cancelBookingDialog(
     String dateStr,
     String classId,
     List<Map<String, dynamic>> bookings,
-  ) {
+  ) async {
     // Find current user's booking profile
     final List<Map<String, dynamic>> myBookings = bookings
         .where((Map<String, dynamic> b) => b['userId'] == _currentUser?.uid)
         .toList();
 
-    showDialog<void>(
+    await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(

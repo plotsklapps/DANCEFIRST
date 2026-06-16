@@ -4,7 +4,7 @@ import 'package:dancefirst/screens/homescreen/home_screen.dart';
 import 'package:dancefirst/screens/loading_screen.dart';
 import 'package:dancefirst/screens/onboardingscreen/onboarding_screen.dart';
 import 'package:dancefirst/screens/onboardingscreen/verification_screen.dart';
-import 'package:dancefirst/services/firestore_service.dart';
+import 'package:dancefirst/services/client_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +41,9 @@ class _AuthGateState extends State<AuthGate> {
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen((
       User? user,
     ) {
+      if (user == null) {
+        ClientState.instance.clear();
+      }
       if (mounted) {
         setState(() {
           _currentUser = user;
@@ -77,7 +80,8 @@ class _AuthGateState extends State<AuthGate> {
         });
 
         if (_isVerified) {
-          final String role = await FirestoreService().getUserRole();
+          await ClientState.instance.initialize(updatedUser);
+          final String role = ClientState.instance.sRole.value;
           setState(() {
             _userRole = role;
           });

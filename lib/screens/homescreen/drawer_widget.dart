@@ -1,10 +1,11 @@
 import 'package:dancefirst/screens/admin/admin_dashboard.dart';
 import 'package:dancefirst/screens/registration/registration_screen.dart';
-import 'package:dancefirst/services/firestore_service.dart';
+import 'package:dancefirst/services/client_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
 
-class DrawerWidget extends StatelessWidget {
+class DrawerWidget extends SignalWidget {
   const DrawerWidget({
     required this.user,
     required this.role,
@@ -16,7 +17,6 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FirestoreService firestoreService = FirestoreService();
     final ThemeData theme = Theme.of(context);
 
     return Drawer(
@@ -75,67 +75,60 @@ class DrawerWidget extends StatelessWidget {
             },
           ),
 
-          // --- PROFIELEN STREAM ---
+          // --- PROFIELEN LIST ---
           if (user != null)
-            StreamBuilder<List<Map<String, dynamic>>>(
-              stream: firestoreService.getProfilesStream(user!.uid),
-              builder:
-                  (
-                    BuildContext context,
-                    AsyncSnapshot<List<Map<String, dynamic>>> profilesSnapshot,
+            Builder(
+              builder: (BuildContext context) {
+                final List<Map<String, dynamic>> profiles =
+                    ClientState.instance.sProfiles.value;
+                if (profiles.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List<Widget>.generate(profiles.length, (
+                    int index,
                   ) {
-                    if (!profilesSnapshot.hasData ||
-                        profilesSnapshot.data!.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
+                    final Map<String, dynamic> p = profiles[index];
+                    final String firstName =
+                        p['firstName'] as String? ?? 'Profiel';
+                    final String dob = p['dob'] as String? ?? '';
+                    final String type = p['type'] as String? ?? 'DanceKids';
+                    final bool isKids = type == 'DanceKids';
 
-                    final List<Map<String, dynamic>> profiles =
-                        profilesSnapshot.data!;
-
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List<Widget>.generate(profiles.length, (
-                        int index,
-                      ) {
-                        final Map<String, dynamic> p = profiles[index];
-                        final String firstName =
-                            p['firstName'] as String? ?? 'Profiel';
-                        final String dob = p['dob'] as String? ?? '';
-                        final String type = p['type'] as String? ?? 'DanceKids';
-                        final bool isKids = type == 'DanceKids';
-
-                        return ListTile(
-                          leading: Icon(
-                            isKids
-                                ? Icons.child_care
-                                : Icons.sports_gymnastics_outlined,
-                            color: theme.colorScheme.primary,
+                    return ListTile(
+                      leading: Icon(
+                        isKids
+                            ? Icons.child_care
+                            : Icons.sports_gymnastics_outlined,
+                        color: theme.colorScheme.primary,
+                      ),
+                      title: Text(
+                        'Profiel ${index + 1} ($firstName)',
+                      ),
+                      subtitle: dob.isNotEmpty ? Text('Geb: $dob') : null,
+                      trailing: const Icon(
+                        Icons.edit_outlined,
+                        size: 20,
+                      ),
+                      onTap: () async {
+                        Navigator.pop(context);
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (_) {
+                              return RegistrationScreen(
+                                profileData: p,
+                              );
+                            },
                           ),
-                          title: Text(
-                            'Profiel ${index + 1} ($firstName)',
-                          ),
-                          subtitle: dob.isNotEmpty ? Text('Geb: $dob') : null,
-                          trailing: const Icon(
-                            Icons.edit_outlined,
-                            size: 20,
-                          ),
-                          onTap: () async {
-                            Navigator.pop(context);
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (_) {
-                                  return RegistrationScreen(
-                                    profileData: p,
-                                  );
-                                },
-                              ),
-                            );
-                          },
                         );
-                      }),
+                      },
                     );
-                  },
+                  }),
+                );
+              },
             ),
 
           ListTile(
