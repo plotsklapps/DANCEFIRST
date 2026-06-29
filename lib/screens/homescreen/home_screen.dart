@@ -1,4 +1,5 @@
 import 'package:dancefirst/screens/homescreen/drawer_widget.dart';
+import 'package:dancefirst/screens/news_screen.dart';
 import 'package:dancefirst/screens/registration/registration_screen.dart';
 import 'package:dancefirst/screens/rooster_screen.dart';
 import 'package:dancefirst/screens/tarieven_screen.dart';
@@ -35,6 +36,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
     final ThemeData theme = Theme.of(context);
+    final List<Map<String, dynamic>> profiles =
+        ClientState.instance.sProfiles.value;
+    final String? activeProfileId = ClientState.instance.sActiveProfileId.value;
+
+    final Map<String, dynamic>? activeProfile = profiles.isEmpty
+        ? null
+        : profiles.firstWhere(
+            (Map<String, dynamic> p) => p['id'] == activeProfileId,
+            orElse: () => profiles.first,
+          );
+
+    final String greeting = activeProfile != null
+        ? 'Hoi, ${activeProfile['firstName']}!'
+        : 'Welkom bij DanceFirst!';
 
     return Scaffold(
       appBar: AppBar(
@@ -67,25 +82,42 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
           children: <Widget>[
-            Builder(
-              builder: (BuildContext context) {
-                final List<Map<String, dynamic>> profiles =
-                    ClientState.instance.sProfiles.value;
-                if (profiles.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Icon(Icons.star, size: 80),
+            SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 24,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Column(
+                    children: <Widget>[
+                      Icon(
+                        Icons.star,
+                        size: 80,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        greeting,
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      if (profiles.isEmpty) ...<Widget>[
+                        const SizedBox(height: 32),
+                        const Divider(),
                         const SizedBox(height: 16),
                         const Text(
-                          'Welkom bij DanceFirst!',
+                          'Nog niet ingeschreven?',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 12),
                         FilledButton.icon(
                           onPressed: () async {
                             await Navigator.push(
@@ -99,61 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           label: const Text('Schrijf je hier in'),
                         ),
                       ],
-                    ),
-                  );
-                }
-
-                final String? activeProfileId =
-                    ClientState.instance.sActiveProfileId.value;
-                final Map<String, dynamic> activeProfile = profiles.firstWhere(
-                  (Map<String, dynamic> p) => p['id'] == activeProfileId,
-                  orElse: () => profiles.first,
-                );
-
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.star,
-                        size: 80,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Hoi, ${activeProfile['firstName']}!',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text('Wissel van profiel:'),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        children: profiles.map((Map<String, dynamic> p) {
-                          final bool isSelected = p['id'] == activeProfileId;
-                          return ChoiceChip(
-                            label: Text(p['firstName'] as String),
-                            selected: isSelected,
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                ClientState.instance.sActiveProfileId.value =
-                                    p['id'] as String?;
-                              }
-                            },
-                          );
-                        }).toList(),
-                      ),
+                      const SizedBox(height: 32),
                     ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
             const RoosterScreen(),
             const TarievenScreen(),
-            const Center(child: Text('Nieuws Content')),
+            const NewsScreen(),
             const Center(child: Text('Contact Content')),
           ],
         ),

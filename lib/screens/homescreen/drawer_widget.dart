@@ -18,6 +18,9 @@ class DrawerWidget extends SignalWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final List<Map<String, dynamic>> profiles =
+        ClientState.instance.sProfiles.value;
+    final String? activeProfileId = ClientState.instance.sActiveProfileId.value;
 
     return Drawer(
       child: ListView(
@@ -76,60 +79,78 @@ class DrawerWidget extends SignalWidget {
           ),
 
           // --- PROFIELEN LIST ---
-          if (user != null)
-            Builder(
-              builder: (BuildContext context) {
-                final List<Map<String, dynamic>> profiles =
-                    ClientState.instance.sProfiles.value;
-                if (profiles.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List<Widget>.generate(profiles.length, (
-                    int index,
-                  ) {
-                    final Map<String, dynamic> p = profiles[index];
-                    final String firstName =
-                        p['firstName'] as String? ?? 'Profiel';
-                    final String dob = p['dob'] as String? ?? '';
-                    final String type = p['type'] as String? ?? 'DanceKids';
-                    final bool isKids = type == 'DanceKids';
-
-                    return ListTile(
-                      leading: Icon(
-                        isKids
-                            ? Icons.child_care
-                            : Icons.sports_gymnastics_outlined,
-                        color: theme.colorScheme.primary,
-                      ),
-                      title: Text(
-                        'Profiel ${index + 1} ($firstName)',
-                      ),
-                      subtitle: dob.isNotEmpty ? Text('Geb: $dob') : null,
-                      trailing: const Icon(
-                        Icons.edit_outlined,
-                        size: 20,
-                      ),
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (_) {
-                              return RegistrationScreen(
-                                profileData: p,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  }),
-                );
-              },
+          if (user != null && profiles.isNotEmpty) ...<Widget>[
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              child: Text(
+                'Kies actief profiel:',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
+            ...List<Widget>.generate(profiles.length, (
+              int index,
+            ) {
+              final Map<String, dynamic> p = profiles[index];
+              final String firstName = p['firstName'] as String? ?? 'Profiel';
+              final String dob = p['dob'] as String? ?? '';
+              final String type = p['type'] as String? ?? 'DanceKids';
+              final bool isKids = type == 'DanceKids';
+              final bool isSelected = p['id'] == activeProfileId;
+
+              return ListTile(
+                selected: isSelected,
+                selectedTileColor: theme.colorScheme.primaryContainer
+                    .withValues(alpha: 100),
+                leading: Icon(
+                  isKids ? Icons.child_care : Icons.sports_gymnastics_outlined,
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
+                ),
+                title: Text(
+                  'Profiel ${index + 1} ($firstName)',
+                  style: TextStyle(
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+                subtitle: dob.isNotEmpty ? Text('Geb: $dob') : null,
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.edit_outlined,
+                    size: 20,
+                  ),
+                  tooltip: 'Profiel bewerken',
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) {
+                          return RegistrationScreen(
+                            profileData: p,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                onTap: () {
+                  ClientState.instance.sActiveProfileId.value =
+                      p['id'] as String?;
+                },
+              );
+            }),
+            const Divider(),
+          ],
 
           ListTile(
             leading: Icon(Icons.logout, color: theme.colorScheme.error),
